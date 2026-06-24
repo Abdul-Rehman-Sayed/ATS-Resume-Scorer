@@ -1,0 +1,42 @@
+# Secrets
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+.streamlit/secrets.toml
+**/.streamlit/secrets.toml
+!**/secrets.toml.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+venv/
+.venv/
+env/
+backend/venv/
+
+# Logs
+*.log
+logs/
+backend/logs/
+
+# Build / cache
+dist/
+build/
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

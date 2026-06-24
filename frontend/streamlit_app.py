@@ -1,0 +1,221 @@
+import streamlit as st
+import sys
+from pathlib import Path
+
+# Put the repo root on sys.path so `from frontend.views import ...` resolves
+# regardless of the directory streamlit was launched from.
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+st.set_page_config(
+    page_title="ATS Resume Scorer",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+)
+
+# Auth state. Populated by Supabase sign-in / sign-up / OAuth.
+for key, default in [
+    ("access_token", None),
+    ("refresh_token", None),
+    ("user_id", None),
+    ("user_email", None),
+    ("auth_error", None),
+    ("auth_info", None),
+    ("current_view", "landing"),
+]:
+    if key not in st.session_state:
+        st.session_state[key] = default
+
+# If we just came back from Google OAuth, Supabase appends `?code=<authcode>`
+# to the redirect URL. Exchange it for a session before rendering anything.
+if not st.session_state.access_token and "code" in st.query_params:
+    from frontend.services import supabase_client
+
+    result = supabase_client.exchange_code_for_session(st.query_params["code"])
+    st.query_params.clear()
+    if "error" in result:
+        st.session_state.auth_error = f"Google sign-in failed: {result['error']}"
+    else:
+        st.session_state.access_token = result["access_token"]
+        st.session_state.refresh_token = result["refresh_token"]
+        st.session_state.user_id = result["user_id"]
+        st.session_state.user_email = result["email"]
+        st.session_state.current_view = "scorer"
+        st.rerun()
+
+
+def load_css() -> str:
+    try:
+        css_path = Path(__file__).parent / "assets" / "styles.css"
+        with open(css_path, "r", encoding="utf-8") as f:
+            return f"<style>{f.read()}</style>"
+    except FileNotFoundError:
+        return ""
+
+
+st.markdown(load_css(), unsafe_allow_html=True)
+
+
+def _authed() -> bool:
+    return bool(st.session_state.access_token)
+
+
+def _go(view: str) -> None:
+    st.session_state.current_view = view
+    st.rerun()
+
+
+def _apply_session(result: dict) -> None:
+    st.session_state.access_token = result["access_token"]
+    st.session_state.refresh_token = result["refresh_token"]
+    st.session_state.user_id = result["user_id"]
+    st.session_state.user_email = result["email"]
+
+
+# ----------------------------------------------------------------------------
+# Navigation bars
+# ----------------------------------------------------------------------------
+def _public_navbar() -> None:
+    left, right = st.columns([4, 1.3])
+    with left:
+        st.markdown("#### ATS Resume Scorer")
+    with right:
+        if st.button("Sign in", use_container_width=True, key="nav_signin"):
+            _go("auth")
+    st.markdown("---")
+
+
+def _app_navbar() -> None:
+    c = st.columns([3, 1.2, 1.2, 1.4, 1.4])
+    with c[0]:
+        st.markdown("#### ATS Resume Scorer")
+        if st.session_state.user_email:
+            st.caption(f"Signed in as {st.session_state.user_email}")
+    with c[1]:
+        if st.button("Analyzer", use_container_width=True, key="nav_scorer"):
+            _go("scorer")
+    with c[2]:
+        if st.button("History", use_container_width=True, key="nav_history"):
+            _go("history")
+    with c[3]:
+        if st.button("Resources", use_container_width=True, key="nav_resources"):
+            _go("resources")
+    with c[4]:
+        if st.button("Sign out", use_container_width=True, key="nav_signout"):
+            from frontend.services import supabase_client
+
+            supabase_client.sign_out()
+            for k in ("access_token", "refresh_token", "user_id", "user_email"):
+                st.session_state[k] = None
+            _go("landing")
+    st.markdown("---")
+
+
+# ----------------------------------------------------------------------------
+# Auth screen (sign in / sign up / Google)
+# ----------------------------------------------------------------------------
+def _render_auth() -> None:
+    from frontend.services import supabase_client
+
+    _, mid, _ = st.columns([1, 2, 1])
+    with mid:
+        st.markdown("<div class='auth-title'>Welcome</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div class='auth-sub'>Sign in or create an account to analyze your resume.</div>",
+            unsafe_allow_html=True,
+        )
+
+        if st.session_state.auth_error:
+            st.error(st.session_state.auth_error)
+            st.session_state.auth_error = None
+        if st.session_state.auth_info:
+            st.info(st.session_state.auth_info)
+            st.session_state.auth_info = None
+
+        tab_in, tab_up = st.tabs(["Sign in", "Sign up"])
+
+        with tab_in:
+            with st.form("signin_form", clear_on_submit=False):
+                email = st.text_input("Email", key="signin_email")
+                password = st.text_input("Password", type="password", key="signin_pw")
+                submitted = st.form_submit_button("Sign in", use_container_width=True)
+            if submitted:
+                result = supabase_client.sign_in_with_password(email, password)
+                if "error" in result:
+                    st.session_state.auth_error = result["error"]
+                    st.rerun()
+                else:
+                    _apply_session(result)
+                    _go("scorer")
+
+        with tab_up:
+            with st.form("signup_form", clear_on_submit=False):
+                email_up = st.text_input("Email", key="signup_email")
+                password_up = st.text_input(
+                    "Password (min 6 chars)", type="password", key="signup_pw"
+                )
+                submitted_up = st.form_submit_button(
+                    "Create account", use_container_width=True
+                )
+            if submitted_up:
+                result = supabase_client.sign_up_with_password(email_up, password_up)
+                if "error" in result:
+                    st.session_state.auth_error = result["error"]
+                    st.rerun()
+                elif result.get("pending_confirmation"):
+                    st.session_state.auth_info = (
+                        f"Check your inbox — confirmation email sent to {result['email']}."
+                    )
+                    st.rerun()
+                else:
+                    _apply_session(result)
+                    _go("scorer")
+
+        st.markdown(
+            "<div style='text-align:center; margin: 10px 0; color:#9ca3af;'>or</div>",
+            unsafe_allow_html=True,
+        )
+
+        oauth = supabase_client.google_oauth_url()
+        if "error" in oauth:
+            st.caption(f"Google sign-in unavailable: {oauth['error']}")
+        else:
+            st.link_button(
+                "Continue with Google", url=oauth["url"], use_container_width=True
+            )
+
+        st.markdown("")
+        if st.button("Back to home", key="auth_back", use_container_width=True):
+            _go("landing")
+
+
+# ----------------------------------------------------------------------------
+# Router
+# ----------------------------------------------------------------------------
+view = st.session_state.current_view
+
+# Gate: the app pages require a signed-in user.
+if view in ("scorer", "history", "resources") and not _authed():
+    view = "auth"
+
+if not _authed():
+    if view == "auth":
+        _render_auth()
+    else:
+        from frontend.views import landing
+
+        _public_navbar()
+        landing.render()
+else:
+    _app_navbar()
+    if view == "history":
+        from frontend.views import history
+
+        history.render()
+    elif view == "resources":
+        from frontend.views import resources
+
+        resources.render()
+    else:  # "scorer" and "landing" both land on the analyzer once signed in
+        from frontend.views import scorer
+
+        scorer.render()
