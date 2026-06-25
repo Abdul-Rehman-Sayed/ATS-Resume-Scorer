@@ -2,7 +2,6 @@ from typing import Any, Dict
 
 import streamlit as st
 
-
 def display_skill_validation(analysis: Dict[str, Any]) -> None:
     details = analysis.get("skill_validation_details") or {}
     validated = details.get("validated", [])
@@ -32,7 +31,7 @@ def display_skill_validation(analysis: Dict[str, Any]) -> None:
 
                 project_text = ", ".join(projects[:3]) if projects else "experience section"
                 sim_text = f" ({similarity * 100:.0f}% match)" if isinstance(similarity, (int, float)) else ""
-                st.markdown(f"- **{skill}**{sim_text} — demonstrated in: {project_text}")
+                st.markdown(f"- **{skill}**{sim_text} - demonstrated in: {project_text}")
 
     if unvalidated:
         with st.expander(f"Unvalidated skills ({len(unvalidated)})", expanded=False):

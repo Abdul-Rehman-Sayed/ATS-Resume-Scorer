@@ -2,10 +2,9 @@ from typing import Any, Dict, Optional
 
 import streamlit as st
 
-
 def display_jd_comparison(jd_comparison: Optional[Dict[str, Any]]) -> None:
     if not jd_comparison:
-        return  # caller decides whether to render the section at all
+        return
 
     st.markdown("### Job Description Match")
 

@@ -6,12 +6,11 @@ import streamlit as st
 from frontend.services import api_client
 from frontend.components.dashboard import display_results_dashboard
 
-
 def _read_jd(jd_file, jd_text: str) -> str:
     """
     Turn whatever the user provided into a plain JD string for the backend.
 
-    For .txt files we decode in-process — that's a trivial operation, no need
+    For .txt files we decode in-process - that's a trivial operation, no need
     for a backend round-trip. For PDF/DOCX, we'd need the backend's parser;
     we don't have a public endpoint for that, so we ask the user to paste text
     instead for non-txt JDs.
@@ -23,11 +22,10 @@ def _read_jd(jd_file, jd_text: str) -> str:
     if jd_file.name.lower().endswith(".txt"):
         return jd_file.getvalue().decode("utf-8", errors="ignore")
     st.warning(
-        "Job description files must be `.txt` for now — paste the JD text instead "
+        "Job description files must be `.txt` for now - paste the JD text instead "
         "if you have a PDF or DOCX."
     )
     return ""
-
 
 def _show_backend_error(exc: Exception) -> None:
     """Translate a `requests` exception into a friendly Streamlit error."""
@@ -48,7 +46,6 @@ def _show_backend_error(exc: Exception) -> None:
     else:
         st.error(f"Unexpected error: {exc}")
 
-
 def _summary_text(analysis: dict) -> str:
     """Tiny client-side text summary for the Download button."""
     score = analysis.get("ATS_score", analysis.get("ats_score", 0))
@@ -65,7 +62,6 @@ def _summary_text(analysis: dict) -> str:
         lines.append("SUGGESTIONS:")
         lines.extend(f"  - {s}" for s in analysis["suggestions"])
     return "\n".join(lines)
-
 
 def _render_upload_area(analysis_mode: str):
     """Two-column upload widgets. Returns (resume_file, jd_file, jd_text)."""
@@ -119,13 +115,11 @@ def _render_upload_area(analysis_mode: str):
 
     return resume_file, jd_file, jd_text
 
-
 def _render_export_buttons(analysis: dict) -> None:
     st.markdown("### Export Results")
     c1, c2 = st.columns(2)
 
     with c1:
-        # Lazy: only call the backend the first time the user clicks expand.
         if st.button(
             "Generate PDF Report", use_container_width=True, type="primary"
         ):
@@ -159,15 +153,14 @@ def _render_export_buttons(analysis: dict) -> None:
             key="download_summary",
         )
 
-
 def render() -> None:
     st.title("ATS Resume Scorer")
     st.markdown(
-        "Upload your resume — and optionally a job description — for a comprehensive analysis."
+        "Upload your resume - and optionally a job description - for a comprehensive analysis."
     )
     st.info(
-        "**General ATS Score**: resume only — overall compatibility.  \n"
-        "**JD Comparison**: resume + job description — targeted match analysis."
+        "**General ATS Score**: resume only - overall compatibility.  \n"
+        "**JD Comparison**: resume + job description - targeted match analysis."
     )
 
     st.markdown("---")
@@ -186,7 +179,6 @@ def render() -> None:
 
     if not resume_file:
         st.info("Upload your resume to begin.")
-        # If we have a prior result in session, render it again.
         if st.session_state.get("scorer_analysis"):
             display_results_dashboard(st.session_state["scorer_analysis"])
         return
@@ -203,13 +195,11 @@ def render() -> None:
         )
 
     if not analyze:
-        # Re-show previous result on rerun (e.g. after PDF generation).
         if st.session_state.get("scorer_analysis"):
             display_results_dashboard(st.session_state["scorer_analysis"])
             _render_export_buttons(st.session_state["scorer_analysis"])
         return
 
-    # Fresh analysis — drop any cached PDF/result.
     st.session_state.pop("scorer_pdf_bytes", None)
     st.session_state.pop("scorer_analysis", None)
 
@@ -220,7 +210,7 @@ def render() -> None:
     )
 
     try:
-        with st.spinner("Analyzing your resume... this can take 10–30 seconds."):
+        with st.spinner("Analyzing your resume... this can take 10-30 seconds."):
             analysis = api_client.analyze_resume(
                 resume_file=resume_file,
                 access_token=access_token,

@@ -1,10 +1,8 @@
 import streamlit as st
 
-
 def render():
     authed = bool(st.session_state.get("access_token"))
 
-    # Hero (flat, solid color — styled via .hero in styles.css)
     st.markdown(
         """
         <div class="hero">
@@ -16,7 +14,6 @@ def render():
         unsafe_allow_html=True,
     )
 
-    # Call-to-action
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         label = "Start Analyzing Your Resume" if authed else "Get Started"
@@ -26,7 +23,6 @@ def render():
 
     st.markdown("---")
 
-    # Features
     st.markdown("## Key Features")
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -64,27 +60,26 @@ def render():
 
     st.markdown("---")
 
-    # How it works
     st.markdown("## How It Works")
     col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown(
             """
-            #### Step 1 — Upload Your Resume
+            #### Step 1 - Upload Your Resume
             Supports PDF and DOCX formats.
             """
         )
     with col2:
         st.markdown(
             """
-            #### Step 2 — AI Analysis
+            #### Step 2 - AI Analysis
             Our models analyze your resume across multiple dimensions.
             """
         )
     with col3:
         st.markdown(
             """
-            #### Step 3 — Get Feedback
+            #### Step 3 - Get Feedback
             Receive detailed recommendations to improve your resume.
             """
         )

@@ -20,11 +20,10 @@ logger = logging.getLogger("ats_resume_scorer")
 
 router = APIRouter(prefix="/api/v1", tags=["Analysis"])
 
-
 @router.post("/analyze-resume", response_model=AnalysisResponse)
 async def analyze_resume(
     request: Request,
-    resume: UploadFile = File(..., description="Resume file — PDF or DOCX, max 5 MB"),
+    resume: UploadFile = File(..., description="Resume file - PDF or DOCX, max 5 MB"),
     job_description: str = Form("", description="Job description text (optional)"),
     user_id: str = Depends(get_current_user),
 ):
@@ -47,7 +46,6 @@ async def analyze_resume(
         logger.info(f"Parsed '{filename}': {len(resume_text)} chars extracted")
 
     except (FileValidationError, FileParsingError) as exc:
-        # These carry curated, user-facing messages — safe to surface as-is.
         logger.info(f"File rejected: {exc}")
         raise HTTPException(status_code=422, detail=str(exc))
     except Exception as exc:
@@ -57,7 +55,6 @@ async def analyze_resume(
             detail="Could not read or parse the resume. Please upload a valid PDF or DOCX.",
         )
 
-    # Full Analysis Pipeline
     try:
         from backend.services.resume_analyzer import analyze_full_resume
 
@@ -75,7 +72,6 @@ async def analyze_resume(
 
     from backend.models.schemas import ComponentScores
 
-    # Extract jd_comparison details
     jd_comparison_result = None
     if result.get("jd_comparison"):
         jd_comparison_result = JDComparison(
@@ -90,7 +86,6 @@ async def analyze_resume(
             skills_gap=result["jd_comparison"].get("skills_gap", [])[:10],
         )
 
-    # Convert detailed_feedback objects from prediction into what schema expects
     detailed_fb = result.get("detailed_feedback", [])
 
     svd_raw = result.get("skill_validation_details") or {}
@@ -109,7 +104,6 @@ async def analyze_resume(
         detailed_feedback=detailed_fb,
         jd_match_analysis=jd_comparison_result,
         skill_validation_details=skill_val_details,
-        # Retro-compatibility fields
         ats_score=result["ats_score"],
         keyword_match=(
             jd_comparison_result.match_percentage if jd_comparison_result else 0.0
@@ -130,16 +124,14 @@ async def analyze_resume(
 
     return response
 
-
 @router.get("/health")
 async def health_check(request: Request):
-    """Health check — confirms models are loaded and the API is ready."""
+    """Health check - confirms models are loaded and the API is ready."""
     return {
         "status": "healthy",
         "nlp_loaded": request.app.state.nlp is not None,
         "embedder_loaded": request.app.state.embedder is not None,
     }
-
 
 @router.get("/history")
 async def get_history(user_id: str = Depends(get_current_user)):
@@ -151,7 +143,6 @@ async def get_history(user_id: str = Depends(get_current_user)):
     except Exception as exc:
         logger.error(f"History fetch failed: {exc}")
         raise HTTPException(status_code=500, detail="Could not load history.")
-
 
 @router.delete("/history/{analysis_id}")
 async def delete_history_entry(
@@ -174,7 +165,6 @@ async def delete_history_entry(
         logger.error(f"History delete failed: {exc}")
         raise HTTPException(status_code=500, detail="Could not delete the analysis.")
 
-
 @router.post("/generate-pdf")
 async def generate_pdf(
     data: AnalysisResponse,
@@ -196,7 +186,6 @@ async def generate_pdf(
     except Exception as e:
         logger.error(f"Failed to generate PDF: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate PDF.")
-
 
 @router.get("/history/{analysis_id}/pdf")
 async def generate_history_pdf(

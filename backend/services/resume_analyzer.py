@@ -10,7 +10,6 @@ from backend.services.ats_scorer import (
     validate_skills_with_projects,
 )
 
-
 def analyze_full_resume(
     resume_text: str,
     nlp: spacy.Language,
@@ -160,7 +159,6 @@ def analyze_full_resume(
         "experience_months": experience_months,
     }
 
-
 def _generate_strengths(
     parsed_resume: Dict,
     skills: List,
@@ -184,7 +182,7 @@ def _generate_strengths(
         strengths.append("Professional Summary provides a quick overview")
 
     if len(skills) >= 8:
-        strengths.append(f"Strong skill set — {len(skills)} skills detected")
+        strengths.append(f"Strong skill set - {len(skills)} skills detected")
     if len(action_verbs) >= 5:
         strengths.append(
             f"Uses {len(action_verbs)} strong action verbs in bullet points"

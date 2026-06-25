@@ -16,7 +16,6 @@ from backend.api.routes import router
 
 logger = logging.getLogger("ats_resume_scorer")
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting ATS Resume Analyzer API...")
@@ -29,7 +28,7 @@ async def lifespan(app: FastAPI):
         logger.info(f"Loaded {SPACY_MODEL_PRIMARY}")
     except OSError:
         logger.warning(
-            f"{SPACY_MODEL_PRIMARY} not found — falling back to {SPACY_MODEL_SECONDARY}"
+            f"{SPACY_MODEL_PRIMARY} not found - falling back to {SPACY_MODEL_SECONDARY}"
         )
         app.state.nlp = spacy.load(SPACY_MODEL_SECONDARY)
         logger.info(f"Loaded {SPACY_MODEL_SECONDARY} (fallback)")
@@ -45,7 +44,6 @@ async def lifespan(app: FastAPI):
     yield
 
     logger.info("shutting down the api!!")
-
 
 app = FastAPI(
     title=APP_TITLE,
@@ -66,7 +64,6 @@ app.add_middleware(
 
 app.include_router(router)
 
-
 @app.get("/")
 async def root():
     return {
@@ -81,7 +78,6 @@ async def root():
         },
     }
 
-
 if __name__ == "__main__":
     import uvicorn
 
@@ -89,5 +85,5 @@ if __name__ == "__main__":
         "backend.main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True,  # Auto-restart on code changes (dev only)
+        reload=True,
     )

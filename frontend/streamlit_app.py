@@ -2,8 +2,6 @@ import streamlit as st
 import sys
 from pathlib import Path
 
-# Put the repo root on sys.path so `from frontend.views import ...` resolves
-# regardless of the directory streamlit was launched from.
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 st.set_page_config(
@@ -12,7 +10,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Auth state. Populated by Supabase sign-in / sign-up / OAuth.
 for key, default in [
     ("access_token", None),
     ("refresh_token", None),
@@ -25,8 +22,6 @@ for key, default in [
     if key not in st.session_state:
         st.session_state[key] = default
 
-# If we just came back from Google OAuth, Supabase appends `?code=<authcode>`
-# to the redirect URL. Exchange it for a session before rendering anything.
 if not st.session_state.access_token and "code" in st.query_params:
     from frontend.services import supabase_client
 
@@ -42,7 +37,6 @@ if not st.session_state.access_token and "code" in st.query_params:
         st.session_state.current_view = "scorer"
         st.rerun()
 
-
 def load_css() -> str:
     try:
         css_path = Path(__file__).parent / "assets" / "styles.css"
@@ -51,18 +45,14 @@ def load_css() -> str:
     except FileNotFoundError:
         return ""
 
-
 st.markdown(load_css(), unsafe_allow_html=True)
-
 
 def _authed() -> bool:
     return bool(st.session_state.access_token)
 
-
 def _go(view: str) -> None:
     st.session_state.current_view = view
     st.rerun()
-
 
 def _apply_session(result: dict) -> None:
     st.session_state.access_token = result["access_token"]
@@ -70,10 +60,6 @@ def _apply_session(result: dict) -> None:
     st.session_state.user_id = result["user_id"]
     st.session_state.user_email = result["email"]
 
-
-# ----------------------------------------------------------------------------
-# Navigation bars
-# ----------------------------------------------------------------------------
 def _public_navbar() -> None:
     left, right = st.columns([4, 1.3])
     with left:
@@ -82,7 +68,6 @@ def _public_navbar() -> None:
         if st.button("Sign in", use_container_width=True, key="nav_signin"):
             _go("auth")
     st.markdown("---")
-
 
 def _app_navbar() -> None:
     c = st.columns([3, 1.2, 1.2, 1.4, 1.4])
@@ -109,10 +94,6 @@ def _app_navbar() -> None:
             _go("landing")
     st.markdown("---")
 
-
-# ----------------------------------------------------------------------------
-# Auth screen (sign in / sign up / Google)
-# ----------------------------------------------------------------------------
 def _render_auth() -> None:
     from frontend.services import supabase_client
 
@@ -163,7 +144,7 @@ def _render_auth() -> None:
                     st.rerun()
                 elif result.get("pending_confirmation"):
                     st.session_state.auth_info = (
-                        f"Check your inbox — confirmation email sent to {result['email']}."
+                        f"Check your inbox - confirmation email sent to {result['email']}."
                     )
                     st.rerun()
                 else:
@@ -187,13 +168,8 @@ def _render_auth() -> None:
         if st.button("Back to home", key="auth_back", use_container_width=True):
             _go("landing")
 
-
-# ----------------------------------------------------------------------------
-# Router
-# ----------------------------------------------------------------------------
 view = st.session_state.current_view
 
-# Gate: the app pages require a signed-in user.
 if view in ("scorer", "history", "resources") and not _authed():
     view = "auth"
 
@@ -215,7 +191,7 @@ else:
         from frontend.views import resources
 
         resources.render()
-    else:  # "scorer" and "landing" both land on the analyzer once signed in
+    else:
         from frontend.views import scorer
 
         scorer.render()

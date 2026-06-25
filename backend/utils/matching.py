@@ -30,11 +30,9 @@ SKILL_ALIASES: Dict[str, str] = {
     "huggingface": "hugging face",
 }
 
-
 def normalize_skill(skill: str) -> str:
     cleaned = skill.strip().lower()
     return SKILL_ALIASES.get(cleaned, cleaned)
-
 
 def fuzzy_match_keywords(
     resume_keywords: List[str],
@@ -48,12 +46,10 @@ def fuzzy_match_keywords(
     missing_jd_originals = []
 
     for jd_canon, jd_original in jd_normalized.items():
-        # 1. Exact canonical match
         if jd_canon in resume_normalized:
             matched_jd_originals.append(jd_original)
             continue
 
-        # 2. Fuzzy match against all resume canonical names
         best_score = 0
         for resume_canon in resume_normalized:
             score = fuzz.token_sort_ratio(jd_canon, resume_canon)

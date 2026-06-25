@@ -15,7 +15,6 @@ STREET_ADDRESS_PATTERN = (
     r"(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Lane|Ln|Drive|Dr|Court|Ct|Circle|Cir|Way|Place|Pl)\b"
 )
 
-
 def _tier_score(n: float, tiers: list) -> float:
     for threshold, pts in tiers:
         if n >= threshold:
@@ -23,12 +22,9 @@ def _tier_score(n: float, tiers: list) -> float:
 
     return 0.0
 
-
-# Location/privacy detection
 def detect_location_info(text: str, nlp: spacy.Language) -> Dict:
     locations = []
 
-    # method01: spacy NER
     doc = nlp(text)
     for ent in doc.ents:
         if ent.label_ in ["GPE", "LOC"]:
@@ -36,13 +32,11 @@ def detect_location_info(text: str, nlp: spacy.Language) -> Dict:
                 {"text": ent.text, "type": ent.label_.lower(), "start": ent.start_char}
             )
 
-    # moetod02: street address regx
     for match in re.finditer(STREET_ADDRESS_PATTERN, text, re.IGNORECASE):
         locations.append(
             {"text": match.group(), "type": "address", "start": match.start()}
         )
 
-    # method03: ZIP/PIN CODE REGEX PATTERN
     for match in re.finditer(ZIP_CODE_PATTERN, text):
         locations.append({"text": match.group(), "type": "zip", "start": match.start()})
 
@@ -65,11 +59,11 @@ def detect_location_info(text: str, nlp: spacy.Language) -> Dict:
         recommendations.append(" No privacy concerns detected.")
     if has_address:
         recommendations.append(
-            " Remove full street addresses — ATS systems don't need this and it's a privacy risk."
+            " Remove full street addresses - ATS systems don't need this and it's a privacy risk."
         )
     if has_zip:
         recommendations.append(
-            " Remove zip codes — this level of location detail is unnecessary."
+            " Remove zip codes - this level of location detail is unnecessary."
         )
     if privacy_risk in ("low", "medium") and not has_address and not has_zip:
         recommendations.append(
@@ -84,11 +78,9 @@ def detect_location_info(text: str, nlp: spacy.Language) -> Dict:
         "penalty_applied": penalty,
     }
 
-
 def _calculate_semantic_similarity(
     skill: str, text: str, embedder: SentenceTransformer
 ) -> float:
-    # similarity = (A · B) / (|A| × |B|)
     if not skill or not text:
         return 0.0
     try:
@@ -104,21 +96,16 @@ def _calculate_semantic_similarity(
         log_warning(f"Similarity error for '{skill}': {e}", context="ats_scorer")
         return 0.0
 
-
 def _skill_matches(
     skill: str, text: str, embedder: SentenceTransformer, threshold: float
 ) -> Tuple[bool, float]:
 
-    # fast, o(n) directly check if skill is a substring of the text (case-insensitive)
     if skill.lower() in text.lower():
         return True, 1.0
 
-    # slow, semantic similarity check using sentence embeddings
     sim = _calculate_semantic_similarity(skill, text, embedder)
     return sim >= threshold, sim
 
-
-# Skill validation
 def validate_skills_with_projects(
     skills: List[str],
     projects: List[Dict],
@@ -190,8 +177,6 @@ def validate_skills_with_projects(
         "validation_score": validation_score,
     }
 
-
-# 01: formatting score
 def _calc_formatting_score(parsed_resume: Dict, text: str) -> float:
 
     score = 0.0
@@ -241,8 +226,6 @@ def _calc_formatting_score(parsed_resume: Dict, text: str) -> float:
 
     return min(20.0, max(0.0, score))
 
-
-# 02 keyword score
 def _calc_keywords_score(
     resume_keywords: List[str],
     skills: List[str],
@@ -272,8 +255,6 @@ def _calc_keywords_score(
 
     return min(25.0, max(0.0, score))
 
-
-# 3. CONTENT QUALITY SCORE
 def _calc_content_score(
     text: str,
     action_verbs: List[str],
@@ -305,13 +286,9 @@ def _calc_content_score(
 
     return min(25.0, max(0.0, score))
 
-
-# 4. SKILL VALIDATION SCORE
 def _calc_skill_validation_score(validation_results: Dict) -> float:
     return min(15.0, max(0.0, validation_results.get("validation_score", 0.0)))
 
-
-# 5. ATS COMPATIBILITY SCORE
 def _calc_ats_compatibility_score(
     text: str,
     location_results: Dict,
@@ -320,10 +297,8 @@ def _calc_ats_compatibility_score(
 
     score = 15.0
 
-    # dedeuction01
     score -= location_results.get("penalty_applied", 0.0)
 
-    # deduction02
     special_chars = len(re.findall(r"[│┤├┼┴┬╔╗╚╝═║╠╣╦╩╬]", text))
     if special_chars > 20:
         score -= 2.0
@@ -339,9 +314,8 @@ def _calc_ats_compatibility_score(
     exp_desc_len = sum(len(e.get("description", "")) for e in exp_entries)
     edu_desc_len = sum(
         len((e.get("degree") or "") + (e.get("institution") or "")) for e in edu_entries
-    )  # Handle None to prevent string concatenation errors
+    )
 
-    # deduction03
     short_sections = sum(
         [
             bool(exp_entries) and exp_desc_len < 20,
@@ -359,8 +333,6 @@ def _calc_ats_compatibility_score(
 
     return min(15.0, max(0.0, score))
 
-
-# Score aggregation and final interpretation
 def calculate_overall_score(
     text: str,
     parsed_resume: Dict,
@@ -461,8 +433,6 @@ def calculate_overall_score(
         "bonuses": bonuses,
     }
 
-
-# Overall score calculation and interpretation
 def generate_strengths(
     score_results: Dict,
     skill_validation_results: Dict,
@@ -491,8 +461,6 @@ def generate_strengths(
         )
     return strengths
 
-
-# Critical issues that could cause ATS rejection
 def generate_critical_issues(
     score_results: Dict,
     grammar_results: Dict,
@@ -514,8 +482,6 @@ def generate_critical_issues(
 
     return issues
 
-
-# Actionable improvements to enhance ATS performance
 def generate_improvements(
     score_results: Dict,
     skill_validation_results: Dict,
@@ -538,8 +504,6 @@ def generate_improvements(
 
     return improvements
 
-
-# Interpretation of overall score
 def _generate_score_interpretation(overall_score: float) -> str:
     if overall_score >= 90:
         return "Excellent! Your resume is highly optimized for ATS systems."

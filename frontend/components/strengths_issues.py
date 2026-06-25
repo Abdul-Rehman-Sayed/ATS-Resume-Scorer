@@ -1,7 +1,6 @@
 from typing import Any, Dict, List
 import streamlit as st
 
-
 def display_strengths(strengths: List[str]) -> None:
     st.markdown("### Strengths")
     if not strengths:
@@ -9,7 +8,6 @@ def display_strengths(strengths: List[str]) -> None:
         return
     for item in strengths:
         st.markdown(f"- {item}")
-
 
 def display_critical_issues(analysis: Dict[str, Any]) -> None:
     critical = analysis.get("critical_issues") or []

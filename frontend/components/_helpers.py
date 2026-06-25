@@ -1,17 +1,15 @@
 from typing import Tuple
 
-
 def get_score_color(score: float) -> Tuple[str, str]:
-    """Return (text_color, background_color) for a 0–100 score."""
+    """Return (text_color, background_color) for a 0-100 score."""
     if score >= 80:
-        return "#2e7d32", "#e8f5e9"  # green
+        return "#2e7d32", "#e8f5e9"
     if score >= 60:
-        return "#f57c00", "#fff3e0"  # orange
-    return "#c62828", "#ffebee"      # red
-
+        return "#f57c00", "#fff3e0"
+    return "#c62828", "#ffebee"
 
 def get_score_emoji(score: float) -> str:
-    """Emoji that matches the score band — used in headlines."""
+    """Emoji that matches the score band - used in headlines."""
     if score >= 90:
         return ""
     if score >= 80:
@@ -21,7 +19,6 @@ def get_score_emoji(score: float) -> str:
     if score >= 60:
         return ""
     return ""
-
 
 def get_severity_style(severity: str) -> Tuple[str, str, str]:
     """

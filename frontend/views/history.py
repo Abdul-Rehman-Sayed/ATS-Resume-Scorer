@@ -3,7 +3,6 @@ import streamlit as st
 
 from frontend.services import api_client
 
-
 def _show_backend_error(exc: Exception) -> None:
     if isinstance(exc, requests.ConnectionError):
         st.error("Could not reach the backend. Is it running on port 8000?")
@@ -11,7 +10,6 @@ def _show_backend_error(exc: Exception) -> None:
         st.error(f"Backend returned {exc.response.status_code}: {exc.response.text}")
     else:
         st.error(f"Unexpected error: {exc}")
-
 
 def render() -> None:
     st.title("Analysis History")
@@ -51,7 +49,7 @@ def render() -> None:
             "jd_match_analysis"
         )
 
-        with st.expander(f"{filename} — Score: {ats_score:.0f}/100 — {created_at}"):
+        with st.expander(f"{filename} - Score: {ats_score:.0f}/100 - {created_at}"):
             c1, c2, c3 = st.columns(3)
             with c1:
                 st.metric("Overall", f"{ats_score:.0f}/100")

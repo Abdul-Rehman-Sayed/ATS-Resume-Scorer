@@ -22,14 +22,11 @@ from backend.core.config import (
     SUPPORTED_MIME_TYPES,
 )
 
-
 class FileParsingError(Exception):
     pass
 
-
 class FileValidationError(Exception):
     pass
-
 
 def validate_file(file_data: bytes, filename: str) -> Tuple[bool, str, Optional[str]]:
     file_size_bytes = len(file_data)
@@ -69,7 +66,6 @@ def validate_file(file_data: bytes, filename: str) -> Tuple[bool, str, Optional[
 
     return True, "", SUPPORTED_MIME_TYPES[mime_type]
 
-
 def _extract_pdf_hyperlinks(file_data: bytes) -> str:
     urls = []
     try:
@@ -85,7 +81,6 @@ def _extract_pdf_hyperlinks(file_data: bytes) -> str:
                     action = annot.get("/A", {})
                     uri = action.get("/URI", "")
                     if uri and isinstance(uri, (str, bytes)):
-                        # PyPDF2 may return bytes for URI values
                         if isinstance(uri, bytes):
                             uri = uri.decode("utf-8", errors="ignore")
                         uri = uri.strip()
@@ -96,7 +91,6 @@ def _extract_pdf_hyperlinks(file_data: bytes) -> str:
     except Exception:
         pass
     return "\n".join(urls)
-
 
 def _extract_pdf_with_pdfplumber(file_data: bytes) -> str:
     text = ""
@@ -118,7 +112,6 @@ def _extract_pdf_with_pdfplumber(file_data: bytes) -> str:
 
     return text.strip()
 
-
 def _extract_pdf_with_pypdf2(file_data: bytes) -> str:
     text = ""
     pdf_reader = PyPDF2.PdfReader(io.BytesIO(file_data))
@@ -138,7 +131,6 @@ def _extract_pdf_with_pypdf2(file_data: bytes) -> str:
         text = text.strip() + "\n" + hyperlinks
 
     return text.strip()
-
 
 def extract_text_from_pdf(file_data: bytes) -> str:
     try:
@@ -163,7 +155,6 @@ def extract_text_from_pdf(file_data: bytes) -> str:
             "The PDF may be corrupted, password-protected, or contain only scanned images. "
             "Please ensure it contains selectable text."
         ) from e
-
 
 def extract_text_from_docx(file_data: bytes) -> str:
     try:
@@ -201,7 +192,7 @@ def extract_text_from_docx(file_data: bytes) -> str:
         return text.strip()
 
     except FileParsingError:
-        raise  # Re-raise unchanged — don't wrap in another FileParsingError
+        raise
 
     except Exception as e:
         log_error(e, context="extract_text_from_docx")
@@ -211,14 +202,12 @@ def extract_text_from_docx(file_data: bytes) -> str:
             "Please try re-saving or converting to PDF."
         ) from e
 
-
 def extract_text_from_doc(file_data: bytes) -> str:
     raise FileParsingError(
         "Legacy .doc format is not supported. "
         "Please convert your document to .docx or .pdf and try again. "
         "You can convert using Microsoft Word, Google Docs, or online tools."
     )
-
 
 def extract_text(file_data: bytes, file_type: str) -> str:
     if file_type == "pdf":
@@ -232,11 +221,9 @@ def extract_text(file_data: bytes, file_type: str) -> str:
             f"invalid file type: {file_type}. supported types are: pdf, docx and doc"
         )
 
-
 def parse_resume_file(file_data: bytes, filename: str) -> Tuple[str, dict]:
     log_info(f"parsing file :{filename}", context="parse_Resume_file")
 
-    # phase01:validate file
     try:
         is_valid, error_msg, file_type = validate_file(file_data, filename)
         if not is_valid:
@@ -254,8 +241,6 @@ def parse_resume_file(file_data: bytes, filename: str) -> Tuple[str, dict]:
             "Could not validate the uploaded file. Please ensure it is a valid PDF or DOCX."
         ) from e
 
-    # phase02: extraction of file
-
     try:
         text = extract_text(file_data, file_type)
         log_info(
@@ -263,7 +248,7 @@ def parse_resume_file(file_data: bytes, filename: str) -> Tuple[str, dict]:
         )
 
     except FileParsingError:
-        raise  # Re-raise unchanged
+        raise
 
     except Exception as e:
         log_error(e, context="parse_resume_file_extraction")

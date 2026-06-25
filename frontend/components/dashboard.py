@@ -10,13 +10,12 @@ from frontend.components.detailed_feedback import display_detailed_feedback
 from frontend.components.action_items import display_action_items
 from frontend.components.recommendations import display_recommendations
 
-
 def display_results_dashboard(analysis: Dict[str, Any]) -> None:
     """
     Render the full results page from one backend response dict.
 
     `analysis` is the JSON body returned by POST /api/v1/analyze-resume
-    (i.e. an AnalysisResponse). No transformation is done here — every
+    (i.e. an AnalysisResponse). No transformation is done here - every
     section reads the fields it needs directly.
     """
     display_overall_score(analysis)
@@ -34,7 +33,6 @@ def display_results_dashboard(analysis: Dict[str, Any]) -> None:
     display_skill_validation(analysis)
     st.markdown("---")
 
-    # JD comparison only shows up if the user actually submitted a JD.
     jd_comparison = analysis.get("jd_comparison") or analysis.get("jd_match_analysis")
     if jd_comparison:
         display_jd_comparison(jd_comparison)

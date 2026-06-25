@@ -7,11 +7,9 @@ from groq import Groq
 
 logger = logging.getLogger("ats_resume_scorer")
 
-
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
 _client = None
-
 
 def _get_client() -> Groq:
     global _client
@@ -22,7 +20,6 @@ def _get_client() -> Groq:
             raise ValueError("GROQ_API_KEY environment variable not set")
         _client = Groq(api_key=api_key)
     return _client
-
 
 RESUME_SYSTEM_PROMPT = (
     "You are a resume parser. Extract information from the resume "
@@ -77,7 +74,6 @@ Important instructions:
 Resume Text:
 {raw_text}"""
 
-
 def _call_groq(client: Groq, system_prompt: str, user_prompt: str) -> str:
 
     response = client.chat.completions.create(
@@ -92,17 +88,13 @@ def _call_groq(client: Groq, system_prompt: str, user_prompt: str) -> str:
 
     return response.choices[0].message.content.strip()
 
-
 def _try_parse_json(text: str) -> dict | None:
 
-    # Strip markdown code fences if present
     cleaned = text.strip()
     if cleaned.startswith("```"):
 
-        # Remove opening fence (```json or ```)
         first_newline = cleaned.index("\n") if "\n" in cleaned else len(cleaned)
         cleaned = cleaned[first_newline + 1 :]
-        # Remove closing fence
         if cleaned.endswith("```"):
             cleaned = cleaned[:-3]
         cleaned = cleaned.strip()
@@ -111,7 +103,6 @@ def _try_parse_json(text: str) -> dict | None:
         return json.loads(cleaned)
     except json.JSONDecodeError:
         return None
-
 
 def parse_resume(raw_text: str) -> Dict:
 
@@ -140,7 +131,6 @@ def parse_resume(raw_text: str) -> Dict:
         f"Groq returned unparseable response after retry. Raw response:\n{raw_response[:500]}"
     )
 
-
 JD_SYSTEM_PROMPT = (
     "You are a job description parser. Extract information and "
     "return ONLY a valid JSON object. No explanation, no markdown."
@@ -167,7 +157,6 @@ Important instructions:
 Job Description Text:
 {raw_text}"""
 
-
 def parse_job_description(raw_text: str) -> Dict:
     client = _get_client()
     prompt = JD_USER_PROMPT.format(raw_text=raw_text)
@@ -192,8 +181,6 @@ def parse_job_description(raw_text: str) -> Dict:
         f"Groq returned unparseable response after retry. Raw response:\n{raw_response[:500]}"
     )
 
-
-# it will make sure, that the parse json has all the valid fields we expect
 def _validate_jd_result(result: dict) -> dict:
 
     defaults = {
@@ -214,8 +201,6 @@ def _validate_jd_result(result: dict) -> dict:
 
     return result
 
-
-# to make sure the parse json has all the valid json fields
 def _validate_resume_result(result: dict) -> dict:
 
     defaults = {
@@ -237,11 +222,9 @@ def _validate_resume_result(result: dict) -> dict:
         if key not in result or result[key] is None:
             result[key] = default
 
-        # Ensure list fields are actually lists
         if isinstance(default, list) and not isinstance(result[key], list):
             result[key] = default
 
-    # Validate experience entries
     for exp in result.get("experience", []):
         if not isinstance(exp, dict):
             continue
@@ -251,13 +234,11 @@ def _validate_resume_result(result: dict) -> dict:
         exp.setdefault("end_date", "")
         exp.setdefault("duration_months", 0)
         exp.setdefault("description", "")
-        # Ensure duration_months is an int
         try:
             exp["duration_months"] = int(exp["duration_months"])
         except (ValueError, TypeError):
             exp["duration_months"] = 0
 
-    # Validate project entries
     for proj in result.get("projects", []):
         if not isinstance(proj, dict):
             continue

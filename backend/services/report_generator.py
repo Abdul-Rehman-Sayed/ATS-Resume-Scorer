@@ -4,15 +4,13 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from typing import Dict
 
 TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), '..', 'templates')
-# autoescape on: resume-derived text (LLM output) is rendered into HTML that is
-# then converted to PDF — escaping prevents HTML/markup injection in the report.
 env = Environment(
     loader=FileSystemLoader(TEMPLATE_DIR),
     autoescape=select_autoescape(['html', 'xml']),
 )
 
 def format_date(value, fmt='%B %d, %Y at %I:%M %p'):
-    """Convert ISO timestamp string → human-readable date string."""
+    """Convert ISO timestamp string -> human-readable date string."""
     if not value:
         return ''
     try:
@@ -24,14 +22,12 @@ def format_date(value, fmt='%B %d, %Y at %I:%M %p'):
 env.filters['format_date'] = format_date
 
 def generate_html_reports(analysis_data: Dict) -> Dict[str, str]:
-    # 1. Extract timestamp 
     now = datetime.now().isoformat()
 
-    # 2.Overall score + interpretation 
     overall_score = analysis_data.get('ATS_score', 0) or analysis_data.get('ats_score', 0)
     interpretation = analysis_data.get('interpretation') or ''  
     cs = analysis_data.get('component_scores') or {}
-    if hasattr(cs, '__dict__'):      # handle Pydantic model objects
+    if hasattr(cs, '__dict__'):
         cs = cs.__dict__
 
     component_scores = {
@@ -42,7 +38,6 @@ def generate_html_reports(analysis_data: Dict) -> Dict[str, str]:
         'ats_compatibility': float(cs.get('ats_compatibility', 0)),
     }
 
-    # Progress-bar percentages (used in Report 1's visual breakdown)
     def pct(score, max_score):
         return min(100, max(0, round(score / max_score * 100)))
 
@@ -56,7 +51,6 @@ def generate_html_reports(analysis_data: Dict) -> Dict[str, str]:
 
     raw_feedback = analysis_data.get('detailed_feedback', [])
 
-    # Normalise: each item may be a dict or an IssueDetail Pydantic object
     def to_dict(item):
         if isinstance(item, dict):
             return item
@@ -75,33 +69,28 @@ def generate_html_reports(analysis_data: Dict) -> Dict[str, str]:
 
     strengths = analysis_data.get('strengths', [])
 
-
     svd_raw = analysis_data.get('skill_validation_details') or {}
     
     if hasattr(svd_raw, 'model_dump'):
         svd_raw = svd_raw.model_dump()
 
-    validated_skills   = svd_raw.get('validated', [])    # [{'skill', 'projects'}]
-    unvalidated_skills = svd_raw.get('unvalidated', [])  # ['Flask', ...]
+    validated_skills   = svd_raw.get('validated', [])
+    unvalidated_skills = svd_raw.get('unvalidated', [])
     total_skills       = svd_raw.get('total', len(validated_skills) + len(unvalidated_skills))
     validated_count    = svd_raw.get('validated_count', len(validated_skills))
     validation_pct     = svd_raw.get('validation_pct', 0.0)
 
-    #7. JD comparison (for Report 3) 
     jd_raw = analysis_data.get('jd_match_analysis') or analysis_data.get('jd_comparison')
     if hasattr(jd_raw, 'model_dump'):
         jd_raw = jd_raw.model_dump()
 
-
-    #8. Score colour (green / orange / red) 
     if overall_score >= 80:
-        score_color = '#16a34a'   # green
+        score_color = '#16a34a'
     elif overall_score >= 60:
-        score_color = '#d97706'   # amber
+        score_color = '#d97706'
     else:
-        score_color = '#dc2626'   # red
+        score_color = '#dc2626'
 
-    #9. Build shared context dict passed to every template 
     context = {
         'timestamp':          now,
         'overall_score':      overall_score,
@@ -114,13 +103,11 @@ def generate_html_reports(analysis_data: Dict) -> Dict[str, str]:
         'medium_priority':    medium_priority,
         'low_priority':       low_priority,
         'all_feedback':       detailed_feedback,
-        # Skill validation
         'validated_skills':   validated_skills,
         'unvalidated_skills': unvalidated_skills,
         'total_skills':       total_skills,
         'validated_count':    validated_count,
         'validation_pct':     validation_pct,
-        # JD analysis
         'jd_analysis':        jd_raw,
     }
 

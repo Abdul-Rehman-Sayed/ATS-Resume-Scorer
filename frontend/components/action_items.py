@@ -2,9 +2,7 @@ from typing import Any, Dict, List, Tuple
 
 import streamlit as st
 
-
 SEVERITY_RANK = {"critical": 0, "high": 1, "medium": 2, "low": 3}
-
 
 def _collect_action_items(analysis: Dict[str, Any]) -> List[Tuple[str, str, str]]:
     """Return list of (severity, source_title, action_text)."""
@@ -22,7 +20,6 @@ def _collect_action_items(analysis: Dict[str, Any]) -> List[Tuple[str, str, str]
 
     items.sort(key=lambda row: SEVERITY_RANK.get(row[0], 99))
     return items
-
 
 def display_action_items(analysis: Dict[str, Any]) -> None:
     items = _collect_action_items(analysis)

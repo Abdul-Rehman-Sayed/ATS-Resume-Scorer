@@ -1,19 +1,12 @@
-# it will tell us, what issues we have to work on first
-
 from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional
-
 
 class Priority(Enum):
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
-
-
-# Priority.CRITICAL
-
 
 @dataclass
 class Recommendation:
@@ -24,8 +17,6 @@ class Recommendation:
     category: str
     action_items: List[str]
 
-
-# generator01
 def generate_skill_recommendations(
     skill_validation_results: Dict,
 ) -> List[Recommendation]:
@@ -67,8 +58,6 @@ def generate_skill_recommendations(
     )
     return recommendations
 
-
-# generator02: grammtical suggestions
 def generate_grammar_recommendations(grammar_results: Dict) -> List[Recommendation]:
     recommendations = []
 
@@ -86,7 +75,7 @@ def generate_grammar_recommendations(grammar_results: Dict) -> List[Recommendati
         for error in critical_errors[:5]:
             word = error.get("error_text", "unknown")
             suggest = error.get("suggestions", [])
-            suffix = f" → '{suggest[0]}'" if suggest else ""
+            suffix = f" -> '{suggest[0]}'" if suggest else ""
             items.append(f"Fix '{word}'{suffix}: {error.get('message', '')}")
         if len(critical_errors) > 5:
             items.append(f"... and {len(critical_errors) - 5} more critical error(s)")
@@ -110,7 +99,7 @@ def generate_grammar_recommendations(grammar_results: Dict) -> List[Recommendati
         for error in moderate_errors[:3]:
             word = error.get("error_text", "unknown")
             suggest = error.get("suggestions", [])
-            suffix = f" → '{suggest[0]}'" if suggest else ""
+            suffix = f" -> '{suggest[0]}'" if suggest else ""
             items.append(f"Fix '{word}'{suffix}: {error.get('message', '')}")
         if len(moderate_errors) > 3:
             items.append(f"... and {len(moderate_errors) - 3} more moderate error(s)")
@@ -149,8 +138,6 @@ def generate_grammar_recommendations(grammar_results: Dict) -> List[Recommendati
 
     return recommendations
 
-
-# generator03: location recommendations
 def generate_location_recommendations(location_results: Dict) -> List[Recommendation]:
     recommendations = []
     detected_locations = location_results.get("detected_locations", [])
@@ -201,8 +188,6 @@ def generate_location_recommendations(location_results: Dict) -> List[Recommenda
     )
     return recommendations
 
-
-# generator04: keyword recommendations
 def generate_keyword_recommendations(
     keyword_analysis: Optional[Dict] = None,
     resume_keywords: Optional[List[str]] = None,
@@ -287,8 +272,6 @@ def generate_keyword_recommendations(
 
     return recommendations
 
-
-# generator05: formatting and structure recommendations
 def generate_formatting_recommendations(
     score_results: Dict,
     sections: Dict[str, str],
@@ -346,7 +329,7 @@ def generate_formatting_recommendations(
             )
         )
 
-    if formatting_score < 12:  # Below 60% of 20 pts
+    if formatting_score < 12:
         recommendations.append(
             Recommendation(
                 title="Improve Resume Structure",
@@ -368,7 +351,6 @@ def generate_formatting_recommendations(
 
     return recommendations
 
-
 def _prioritize_recommendations(
     recommendations: List[Recommendation],
 ) -> List[Recommendation]:
@@ -382,8 +364,6 @@ def _prioritize_recommendations(
         recommendations, key=lambda r: (priority_order[r.priority], -r.impact_score)
     )
 
-
-# orchestrator of this file
 def generate_all_recommendations(
     skill_validation_results: Dict,
     grammar_results: Dict,
@@ -396,23 +376,19 @@ def generate_all_recommendations(
 
     all_recs = []
 
-    # Collect from all five domain generators
     all_recs.extend(generate_skill_recommendations(skill_validation_results))
     all_recs.extend(generate_grammar_recommendations(grammar_results))
     all_recs.extend(generate_location_recommendations(location_results))
     all_recs.extend(generate_keyword_recommendations(keyword_analysis, resume_keywords))
     all_recs.extend(generate_formatting_recommendations(score_results, sections))
 
-    # Sort: critical first, highest impact within each tier
     prioritized = _prioritize_recommendations(all_recs)
 
-    # Group by priority level for convenient access
     critical = [r for r in prioritized if r.priority == Priority.CRITICAL]
     high = [r for r in prioritized if r.priority == Priority.HIGH]
     medium = [r for r in prioritized if r.priority == Priority.MEDIUM]
     low = [r for r in prioritized if r.priority == Priority.LOW]
 
-    # Estimate improvement potential (sum of impact scores, capped at 30)
     estimated_improvement = min(30.0, sum(r.impact_score for r in prioritized))
 
     return {
@@ -424,7 +400,6 @@ def generate_all_recommendations(
         "total_count": len(prioritized),
         "estimated_improvement": estimated_improvement,
     }
-
 
 def format_recommendations_for_api(recommendations_result: Dict) -> List[Dict]:
     priority_icons = {
@@ -453,7 +428,6 @@ def format_recommendations_for_api(recommendations_result: Dict) -> List[Dict]:
         }
         for rec in recommendations_result.get("all_recommendations", [])
     ]
-
 
 def get_recommendation_summary(recommendations_result: Dict) -> str:
     total = recommendations_result.get("total_count", 0)

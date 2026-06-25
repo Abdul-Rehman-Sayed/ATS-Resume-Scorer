@@ -1,9 +1,6 @@
-# what is specifically wrong in my resume?
-
 import re
 from typing import List, Dict, Any, Optional
 from backend.models.schemas import IssueDetail
-
 
 def analyze_issues(
     resume_text: str,
@@ -18,8 +15,6 @@ def analyze_issues(
 
     detected: List[IssueDetail] = []
 
-    # Unpack frequently-used structured fields once at the top
-
     exp_entries = [
         e for e in parsed_resume.get("experience", []) if isinstance(e, dict)
     ]
@@ -27,12 +22,10 @@ def analyze_issues(
     proj_entries = [p for p in parsed_resume.get("projects", []) if isinstance(p, dict)]
     summary = (
         parsed_resume.get("professional_summary") or ""
-    ).strip()  # Handle None to prevent string concatenation errors
+    ).strip()
 
-    # Build a combined experience text for regex-based checks that still need text
     experience_text = "\n".join(e.get("description", "") for e in exp_entries).strip()
 
-    # 1. missig project section
     resume_lower = resume_text.lower()
     has_projects_signal = any(
         kw in resume_lower
@@ -60,32 +53,31 @@ def analyze_issues(
                     "ATS systems and recruiters look for concrete projects to validate "
                     "that your listed skills have been applied in practice."
                 ),
-                where_it_appears="Resume structure — no 'Projects' header was detected",
+                where_it_appears="Resume structure - no 'Projects' header was detected",
                 how_to_fix=(
-                    "Add a 'Projects' section with 2–3 significant projects. "
+                    "Add a 'Projects' section with 2-3 significant projects. "
                     "For each project, include the title, technologies used, "
                     "what you built, and a measurable outcome."
                 ),
                 action_items=[
                     "Add a 'PROJECTS' section heading after your Experience section",
-                    "Include 2–3 projects (personal, academic, or open-source)",
+                    "Include 2-3 projects (personal, academic, or open-source)",
                     "For each project: write the title, tech stack used, what you built, and a measurable result",
-                    "Example: 'E-Commerce Platform — React, Node.js, MongoDB. Handled 500+ transactions/month'",
+                    "Example: 'E-Commerce Platform - React, Node.js, MongoDB. Handled 500+ transactions/month'",
                     "Link to GitHub or a live demo if available (e.g., github.com/yourname/project)",
                 ],
                 example_improvement=(
                     "Add:\n"
                     "PROJECTS\n"
-                    "• E-Commerce Platform — Built a full-stack shopping site using "
+                    "• E-Commerce Platform - Built a full-stack shopping site using "
                     "React, Node.js, and MongoDB. Implemented payment processing with "
                     "Stripe, handling 500+ transactions/month.\n"
-                    "• ML Sentiment Analyzer — Trained a BERT model on 10K reviews "
+                    "• ML Sentiment Analyzer - Trained a BERT model on 10K reviews "
                     "achieving 92% accuracy. Deployed as a REST API with FastAPI."
                 ),
             )
         )
 
-    # 2. missing experience section
     has_experience_signal = any(
         kw in resume_lower
         for kw in [
@@ -119,7 +111,7 @@ def analyze_issues(
                     "internships, freelance work, or volunteer experience help "
                     "demonstrate professional capability."
                 ),
-                where_it_appears="Resume structure — no 'Experience' or 'Work History' header found",
+                where_it_appears="Resume structure - no 'Experience' or 'Work History' header found",
                 how_to_fix=(
                     "Add an 'Experience' section. If you lack formal employment, "
                     "include internships, freelance projects, open-source contributions, "
@@ -127,22 +119,21 @@ def analyze_issues(
                 ),
                 action_items=[
                     "Add an 'EXPERIENCE' or 'INTERNSHIPS' section to your resume",
-                    "List each role with: Job Title — Company Name (Month Year – Month Year)",
-                    "Add 2–4 bullet points per role describing what you did and its impact",
+                    "List each role with: Job Title - Company Name (Month Year - Month Year)",
+                    "Add 2-4 bullet points per role describing what you did and its impact",
                     "If no formal job: include internships, freelance work, open-source, or college clubs",
                     "Start every bullet with a past-tense action verb (Developed, Built, Led, etc.)",
                 ],
                 example_improvement=(
                     "Add:\n"
                     "EXPERIENCE\n"
-                    "Software Engineering Intern — XYZ Corp (Jun 2025 – Aug 2025)\n"
+                    "Software Engineering Intern - XYZ Corp (Jun 2025 - Aug 2025)\n"
                     "• Developed REST APIs with FastAPI serving 10K requests/day\n"
                     "• Reduced page load time by 40% through caching optimization"
                 ),
             )
         )
 
-    # 3. Missing Education Section
     has_education_signal = any(
         kw in resume_lower
         for kw in [
@@ -179,30 +170,29 @@ def analyze_issues(
                     "No education section was found. Most ATS systems expect an "
                     "Education section with at least your degree and institution."
                 ),
-                where_it_appears="Resume structure — no 'Education' header detected",
+                where_it_appears="Resume structure - no 'Education' header detected",
                 how_to_fix=(
                     "Add an 'Education' section listing your degree, university, "
                     "graduation year, and optionally your GPA or relevant coursework."
                 ),
                 action_items=[
                     "Add an 'EDUCATION' section (usually at the bottom for experienced candidates, top for freshers)",
-                    "Include: Degree name — Institution name (Start Year – End Year)",
+                    "Include: Degree name - Institution name (Start Year - End Year)",
                     "Add your CGPA or percentage if it is 7.0+ or 70%+",
-                    "Optionally list 3–5 relevant courses (e.g., Data Structures, DBMS, ML)",
+                    "Optionally list 3-5 relevant courses (e.g., Data Structures, DBMS, ML)",
                 ],
                 example_improvement=(
                     "Add:\n"
                     "EDUCATION\n"
-                    "B.Tech in Computer Science — IIT Delhi (2021–2025)\n"
+                    "B.Tech in Computer Science - IIT Delhi (2021-2025)\n"
                     "CGPA: 8.5 | Relevant Coursework: Data Structures, ML, DBMS"
                 ),
             )
         )
 
-    # 4. Missing Skills Section
     if (
         not parsed_resume.get("skills") and len(skills) < 3
-    ):  # only flag if extraction also found very few skills
+    ):
         detected.append(
             IssueDetail(
                 issue_title="Missing or Weak Skills Section",
@@ -213,7 +203,7 @@ def analyze_issues(
                     "rely heavily on keyword matching from a dedicated Skills section. "
                     "Without clear skills listed, your resume may fail automated filters."
                 ),
-                where_it_appears="Skills section — either missing or contains very few items",
+                where_it_appears="Skills section - either missing or contains very few items",
                 how_to_fix=(
                     "Add a clear 'Skills' section organized by category. "
                     "Include programming languages, frameworks, tools, and soft skills "
@@ -222,7 +212,7 @@ def analyze_issues(
                 action_items=[
                     "Add a 'TECHNICAL SKILLS' or 'SKILLS' section",
                     "Organize by category: Languages, Frameworks, Tools, Databases, Cloud",
-                    "List at least 10–15 skills relevant to your target role",
+                    "List at least 10-15 skills relevant to your target role",
                     "Use the exact names that appear in job descriptions (e.g., 'React.js' not just 'React')",
                     "Include tools you use daily: Git, VS Code, Postman, Docker, etc.",
                 ],
@@ -236,7 +226,6 @@ def analyze_issues(
             )
         )
 
-    # 5. Skills Lack Supporting Evidence
     unvalidated = skill_validation.get("unvalidated_skills", [])
     validated = skill_validation.get("validated_skills", [])
     total_skills = len(unvalidated) + len(validated)
@@ -253,7 +242,7 @@ def analyze_issues(
         )
         if len(unvalidated) > 5:
             action_items_skills.append(
-                f"({len(unvalidated) - 5} more unvalidated skills — review each one)"
+                f"({len(unvalidated) - 5} more unvalidated skills - review each one)"
             )
         detected.append(
             IssueDetail(
@@ -282,7 +271,6 @@ def analyze_issues(
             )
         )
 
-    # 6. Weak Action Verbs
     description_lines = [
         line.strip()
         for exp in exp_entries
@@ -302,7 +290,7 @@ def analyze_issues(
                     "ATS systems and recruiters favor bullets that begin with verbs like "
                     "'Developed', 'Implemented', 'Designed', 'Optimized'."
                 ),
-                where_it_appears="Experience section — bullet point openings",
+                where_it_appears="Experience section - bullet point openings",
                 how_to_fix=(
                     "Start every bullet point with a past-tense action verb. "
                     "Avoid starting with 'Responsible for', 'Worked on', or 'Helped with'. "
@@ -312,7 +300,7 @@ def analyze_issues(
                     "Rewrite every bullet that starts with 'Responsible for', 'Helped', 'Worked on', or 'Assisted'",
                     "Use: Developed, Built, Designed, Implemented, Led, Automated, Optimized, Deployed, Reduced, Increased",
                     "Make verbs past-tense for previous roles, present-tense for current role",
-                    f"Review all {len(description_lines)} bullet points — at least {len(description_lines)} should start with action verbs",
+                    f"Review all {len(description_lines)} bullet points - at least {len(description_lines)} should start with action verbs",
                     "Avoid weak openers like 'Was responsible for...' or 'Involved in...'",
                 ],
                 example_improvement=(
@@ -326,7 +314,6 @@ def analyze_issues(
             )
         )
 
-    # 7. No Quantifiable Achievements
     number_pattern = r"\d+[%+]?|\$\d+"
     has_metrics = (
         bool(re.findall(number_pattern, experience_text)) if experience_text else False
@@ -343,7 +330,7 @@ def analyze_issues(
                     "(numbers, percentages, or dollar amounts). Quantified achievements "
                     "make your impact concrete and are strongly preferred by recruiters."
                 ),
-                where_it_appears="Experience section — bullet point content",
+                where_it_appears="Experience section - bullet point content",
                 how_to_fix=(
                     "Add numbers to at least 50% of your bullet points. "
                     "Include metrics like: users served, response time improved, "
@@ -367,7 +354,6 @@ def analyze_issues(
             )
         )
 
-    # 8. Missing Contact Information
     if contact_info:
         missing_contacts = []
         if not contact_info.get("email"):
@@ -411,7 +397,6 @@ def analyze_issues(
                 )
             )
 
-    # 9. Low Formatting Score
     formatting_score = scores.get("formatting_score", 20)
     if formatting_score < 10:
         detected.append(
@@ -433,10 +418,10 @@ def analyze_issues(
                 action_items=[
                     "Switch to a single-column layout (avoid two-column templates for ATS)",
                     "Use standard section headers: EXPERIENCE, EDUCATION, SKILLS, PROJECTS",
-                    "Use bullet points (•) consistently — don't mix with dashes or asterisks",
-                    "Remove all tables, text boxes, headers/footers, and images — ATS cannot parse them",
-                    "Use a standard font (Calibri, Arial, Times New Roman) at 10–12pt",
-                    "Order sections: Contact → Summary → Experience → Projects → Education → Skills",
+                    "Use bullet points (•) consistently - don't mix with dashes or asterisks",
+                    "Remove all tables, text boxes, headers/footers, and images - ATS cannot parse them",
+                    "Use a standard font (Calibri, Arial, Times New Roman) at 10-12pt",
+                    "Order sections: Contact -> Summary -> Experience -> Projects -> Education -> Skills",
                 ],
                 example_improvement=(
                     "Use this structure:\n"
@@ -450,7 +435,6 @@ def analyze_issues(
             )
         )
 
-    # 10. Missing Summary/Objective
     if not summary:
         detected.append(
             IssueDetail(
@@ -462,17 +446,17 @@ def analyze_issues(
                     "section at the top. While not required, a 2-3 line summary helps "
                     "recruiters quickly understand your profile and target role."
                 ),
-                where_it_appears="Top of resume — below contact info",
+                where_it_appears="Top of resume - below contact info",
                 how_to_fix=(
                     "Add a 2-3 sentence summary highlighting your experience level, "
                     "key skills, and career focus. Tailor it to the job you're applying for."
                 ),
                 action_items=[
                     "Add a 'PROFESSIONAL SUMMARY' or 'OBJECTIVE' section at the top of your resume",
-                    "Write 2–3 sentences: who you are, your key skills, and what role you seek",
+                    "Write 2-3 sentences: who you are, your key skills, and what role you seek",
                     "Mention your years of experience or education level upfront",
-                    "Tailor this section for each job application — reference the specific role",
-                    "Keep it under 60 words — recruiters spend only 6 seconds on first scan",
+                    "Tailor this section for each job application - reference the specific role",
+                    "Keep it under 60 words - recruiters spend only 6 seconds on first scan",
                 ],
                 example_improvement=(
                     "Add:\n"
@@ -485,7 +469,6 @@ def analyze_issues(
         )
 
     return detected
-
 
 def generate_issues_summary(detected_issues: List[IssueDetail]) -> List[str]:
     """Extract issue titles to formulate the issues_summary list."""

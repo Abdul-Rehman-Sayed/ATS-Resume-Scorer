@@ -8,7 +8,6 @@ logger = logging.getLogger("ats_resume_scorer")
 
 from backend.core.config import SUPABASE_URL, SUPABASE_KEY
 
-
 def _get_headers():
     if not SUPABASE_URL or not SUPABASE_KEY:
         return None
@@ -18,7 +17,6 @@ def _get_headers():
         "Content-Type": "application/json",
         "Prefer": "return=representation",
     }
-
 
 async def save_analysis(
     user_id: str, filename: str, analysis_result: Dict
@@ -60,7 +58,6 @@ async def save_analysis(
         logger.error(f"Failed to save analysis to Supabase: {exc}")
         return None
 
-
 async def get_user_history(user_id: str) -> List[Dict]:
     headers = _get_headers()
     if not headers:
@@ -99,7 +96,6 @@ async def get_user_history(user_id: str) -> List[Dict]:
         logger.error(f"Failed to fetch history from Supabase: {exc}")
         return []
 
-
 async def delete_analysis(analysis_id: str, user_id: str) -> bool:
     headers = _get_headers()
     if not headers:
@@ -115,8 +111,6 @@ async def delete_analysis(analysis_id: str, user_id: str) -> bool:
                 params={"id": f"eq.{analysis_id}", "user_id": f"eq.{user_id}"},
             )
             response.raise_for_status()
-            # With Prefer: return=representation, the body lists the deleted rows.
-            # An empty list means nothing matched (wrong id or not owned by user).
             deleted = response.json()
             return bool(deleted)
     except Exception as exc:

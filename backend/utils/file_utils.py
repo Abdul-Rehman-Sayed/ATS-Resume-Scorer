@@ -9,14 +9,12 @@ os.makedirs(LOG_DIR, exist_ok=True)
 logger = logging.getLogger("ats_resume_scorer")
 logger.setLevel(logging.INFO)
 
-# Simplified file handler - only basic logs
 file_handler = logging.FileHandler(os.path.join(LOG_DIR, "ats_scorer.log"))
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(
     logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 )
 
-# Simplified console handler
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.WARNING)
 console_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
@@ -24,7 +22,6 @@ console_handler.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 if not logger.handlers:
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
-
 
 class ATSBaseError(Exception):
     """Simple base class for ATS errors."""
@@ -34,36 +31,28 @@ class ATSBaseError(Exception):
         self.message = message
         self.user_message = user_message or "An error occurred. Please try again."
 
-
 class FileUploadError(ATSBaseError):
     pass
-
 
 class FileParsingError(ATSBaseError):
     pass
 
-
 class TextExtractionError(ATSBaseError):
     pass
-
 
 def log_error(error: Exception, context: Optional[str] = None, **kwargs) -> None:
     """Log an error simply."""
     logger.error(f"Error in {context or 'unknown'}: {error}")
 
-
 def log_warning(message: str, context: Optional[str] = None, **kwargs) -> None:
     """Log a warning simply."""
     logger.warning(f"{context}: {message}" if context else message)
-
 
 def log_info(message: str, context: Optional[str] = None, **kwargs) -> None:
     """Log info simply."""
     logger.info(f"{context}: {message}" if context else message)
 
-
 T = TypeVar("T")
-
 
 def with_fallback(
     primary_func: Callable[..., T],
@@ -72,7 +61,6 @@ def with_fallback(
     log_fallback: bool = True,
     **kwargs,
 ) -> Tuple[T, bool]:
-    # Remove error_category if passed by accident
     kwargs.pop("error_category", None)
     try:
         return primary_func(*args, **kwargs), False
@@ -84,7 +72,6 @@ def with_fallback(
         except Exception as fallback_error:
             log_error(fallback_error, context="fallback")
             raise
-
 
 def get_default_grammar_results() -> Dict:
     return {
@@ -99,7 +86,6 @@ def get_default_grammar_results() -> Dict:
         "_note": "Grammar checking unavailable.",
     }
 
-
 def get_default_location_results() -> Dict:
     return {
         "location_found": False,
@@ -111,7 +97,6 @@ def get_default_location_results() -> Dict:
         "_note": "Location detection unavailable.",
     }
 
-
 def get_default_skill_validation_results() -> Dict:
     return {
         "validated_skills": [],
@@ -122,7 +107,6 @@ def get_default_skill_validation_results() -> Dict:
         "_component_status": "unavailable",
         "_note": "Skill validation unavailable.",
     }
-
 
 def get_default_jd_comparison_results() -> Dict:
     return {

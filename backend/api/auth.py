@@ -13,7 +13,6 @@ _ASYMMETRIC_ALGS = ['ES256', 'RS256']
 
 _jwks_client: jwt.PyJWKClient | None = None
 
-
 def _get_jwks_client() -> jwt.PyJWKClient | None:
     global _jwks_client
     if _jwks_client is not None:
@@ -24,7 +23,6 @@ def _get_jwks_client() -> jwt.PyJWKClient | None:
     _jwks_client = jwt.PyJWKClient(jwks_url, cache_keys=True, lifespan=3600)
     return _jwks_client
 
-
 def _verify_token(token: str) -> dict:
     header = jwt.get_unverified_header(token)
     alg = header.get('alg')
@@ -33,7 +31,7 @@ def _verify_token(token: str) -> dict:
         jwks_client = _get_jwks_client()
         if jwks_client is None:
             raise jwt.InvalidTokenError(
-                'SUPABASE_URL not configured — cannot fetch JWKS to verify token'
+                'SUPABASE_URL not configured - cannot fetch JWKS to verify token'
             )
         signing_key = jwks_client.get_signing_key_from_jwt(token).key
         return jwt.decode(
@@ -57,7 +55,6 @@ def _verify_token(token: str) -> dict:
 
     raise jwt.InvalidTokenError(f'Unsupported JWT algorithm: {alg}')
 
-
 def get_current_user(
     creds: HTTPAuthorizationCredentials | None = Depends(_bearer_scheme),
 ) -> str:
@@ -69,7 +66,7 @@ def get_current_user(
         )
 
     if not SUPABASE_URL and not SUPABASE_JWT_SECRET:
-        logger.error('Neither SUPABASE_URL (for JWKS) nor SUPABASE_JWT_SECRET configured — cannot verify tokens')
+        logger.error('Neither SUPABASE_URL (for JWKS) nor SUPABASE_JWT_SECRET configured - cannot verify tokens')
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail='Auth not configured on the server',
@@ -80,7 +77,7 @@ def get_current_user(
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Token expired — sign in again',
+            detail='Token expired - sign in again',
             headers={'WWW-Authenticate': 'Bearer'},
         )
     except jwt.InvalidTokenError as exc:
@@ -90,8 +87,6 @@ def get_current_user(
             headers={'WWW-Authenticate': 'Bearer'},
         )
     except Exception as exc:
-        # PyJWKClient can raise network errors fetching JWKS; surface them as 401
-        # so a misconfigured backend doesn't look like a 500 to the user.
         logger.warning(f'JWT verification failed: {exc}')
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

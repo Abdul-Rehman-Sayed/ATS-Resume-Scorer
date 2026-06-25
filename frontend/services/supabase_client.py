@@ -7,15 +7,12 @@ from supabase import Client, create_client
 
 logger = logging.getLogger("ats_resume_scorer")
 
-
 try:
     from dotenv import load_dotenv
 
-    # this file is frontend/services/supabase_client.py → frontend/.env is one level up
     load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 except ImportError:
     pass
-
 
 def _secret(key: str, section: str = "supabase") -> str:
     """Read from env first, then fall back to st.secrets[section][key]."""
@@ -27,16 +24,14 @@ def _secret(key: str, section: str = "supabase") -> str:
     except (KeyError, FileNotFoundError, AttributeError):
         return ""
 
-
 def _normalize_supabase_url(url: str) -> str:
-    """create_client() expects the project base URL — strip a trailing slash and
+    """create_client() expects the project base URL - strip a trailing slash and
     an accidental /rest/v1 or /auth/v1 suffix so the SDK builds correct paths."""
     url = (url or "").strip().rstrip("/")
     for suffix in ("/rest/v1", "/auth/v1"):
         if url.endswith(suffix):
             url = url[: -len(suffix)]
     return url.rstrip("/")
-
 
 SUPABASE_URL = _normalize_supabase_url(_secret("SUPABASE_URL"))
 SUPABASE_ANON_KEY = _secret("SUPABASE_ANON_KEY")
@@ -47,20 +42,17 @@ OAUTH_REDIRECT_URL = (
     or "http://localhost:8501"
 )
 
-
 def _missing_config() -> str | None:
     if not SUPABASE_URL or not SUPABASE_ANON_KEY:
-        return "Supabase is not configured — set SUPABASE_URL and SUPABASE_ANON_KEY in .env or .streamlit/secrets.toml"
+        return "Supabase is not configured - set SUPABASE_URL and SUPABASE_ANON_KEY in .env or .streamlit/secrets.toml"
     return None
-
 
 @st.cache_resource
 def get_client() -> Client | None:
-    """Cached singleton — preserves PKCE state across Streamlit reruns."""
+    """Cached singleton - preserves PKCE state across Streamlit reruns."""
     if _missing_config():
         return None
     return create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
-
 
 def _session_dict(session, user) -> Dict[str, Any]:
     return {
@@ -69,7 +61,6 @@ def _session_dict(session, user) -> Dict[str, Any]:
         "user_id": user.id,
         "email": user.email,
     }
-
 
 def sign_in_with_password(email: str, password: str) -> Dict[str, Any]:
     err = _missing_config()
@@ -86,7 +77,6 @@ def sign_in_with_password(email: str, password: str) -> Dict[str, Any]:
         logger.warning(f"sign_in_with_password failed: {exc}")
         return {"error": _humanize(exc)}
 
-
 def sign_up_with_password(email: str, password: str) -> Dict[str, Any]:
     err = _missing_config()
     if err:
@@ -101,7 +91,6 @@ def sign_up_with_password(email: str, password: str) -> Dict[str, Any]:
     except Exception as exc:
         logger.warning(f"sign_up failed: {exc}")
         return {"error": _humanize(exc)}
-
 
 def google_oauth_url() -> Dict[str, Any]:
     err = _missing_config()
@@ -118,7 +107,6 @@ def google_oauth_url() -> Dict[str, Any]:
     except Exception as exc:
         logger.warning(f"oauth url generation failed: {exc}")
         return {"error": _humanize(exc)}
-
 
 def exchange_code_for_session(auth_code: str) -> Dict[str, Any]:
     """Called once after the OAuth provider redirects back with `?code=...`."""
@@ -143,7 +131,6 @@ def exchange_code_for_session(auth_code: str) -> Dict[str, Any]:
         logger.warning(f"exchange_code_for_session failed: {exc}")
         return {"error": _humanize(exc)}
 
-
 def sign_out() -> None:
     if _missing_config():
         return
@@ -152,17 +139,15 @@ def sign_out() -> None:
     except Exception as exc:
         logger.warning(f"sign_out failed: {exc}")
 
-
 def _humanize(exc: Exception) -> str:
     msg = str(exc)
-    # supabase errors arrive as "<status>: {json blob}" — surface the human bit
     if "invalid_grant" in msg.lower() or "invalid login" in msg.lower():
         return "Wrong email or password"
     if (
         "user already registered" in msg.lower()
         or "already been registered" in msg.lower()
     ):
-        return "An account with this email already exists — try signing in"
+        return "An account with this email already exists - try signing in"
     if "password should be at least" in msg.lower():
         return "Password too short (Supabase default is 6 characters)"
     return msg

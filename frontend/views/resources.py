@@ -1,13 +1,11 @@
 import streamlit as st
 
-
 def render():
     """Render the resources page"""
 
     st.title("Resources & Tips")
     st.markdown("Learn how to optimize your resume for ATS systems")
 
-    # ATS Tips
     st.markdown("## ATS Optimization Tips")
 
     col1, col2 = st.columns(2)
@@ -38,7 +36,6 @@ def render():
 
     st.markdown("---")
 
-    # Common ATS Keywords
     st.markdown("## Common ATS Keywords by Industry")
 
     tab1, tab2, tab3 = st.tabs(["Tech", "Business", "Creative"])

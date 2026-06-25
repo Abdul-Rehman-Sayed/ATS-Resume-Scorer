@@ -4,9 +4,6 @@ import streamlit as st
 
 from frontend.components._helpers import get_score_color, get_score_emoji
 
-
-# Component max scores match backend/core/config.py SCORE_WEIGHTS.
-# (Backend returns each component's score on its own scale, not 0–100.)
 COMPONENTS = [
     ("Formatting",        "formatting",        20, ""),
     ("Keywords & Skills", "keywords",          25, ""),
@@ -14,7 +11,6 @@ COMPONENTS = [
     ("Skill Validation",  "skill_validation",  15, ""),
     ("ATS Compatibility", "ats_compatibility", 15, ""),
 ]
-
 
 def display_overall_score(analysis: Dict[str, Any]) -> None:
     """Big colored score card with a short interpretation line."""
@@ -39,7 +35,6 @@ def display_overall_score(analysis: Dict[str, Any]) -> None:
             """,
             unsafe_allow_html=True,
         )
-
 
 def display_score_breakdown(analysis: Dict[str, Any]) -> None:
     """Five progress bars, one per scoring component."""
