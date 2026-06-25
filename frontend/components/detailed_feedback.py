@@ -5,7 +5,6 @@ import streamlit as st
 from frontend.components._helpers import get_severity_style
 
 SEVERITY_ORDER = ["critical", "high", "medium", "low"]
-
 _LEVEL_ALIASES = {"moderate": "medium", "info": "low"}
 
 
@@ -19,8 +18,9 @@ def _group_by_severity(issues: List[Dict[str, Any]]) -> Dict[str, List[Dict[str,
         grouped[level].append(issue)
     return grouped
 
+
 def _render_issue(issue: Dict[str, Any]) -> None:
-    icon, text_color, bg_color = get_severity_style(issue.get("severity_level"))
+    text_color, bg_color = get_severity_style(issue.get("severity_level"))
     title = issue.get("issue_title", "Untitled issue")
     impact = issue.get("ats_impact", "")
     explanation = issue.get("explanation", "")
@@ -55,13 +55,14 @@ def _render_issue(issue: Dict[str, Any]) -> None:
             st.markdown("**Example improvement:**")
             st.code(example, language="text")
 
+
 def display_detailed_feedback(analysis: Dict[str, Any]) -> None:
     issues = analysis.get("detailed_feedback") or []
     if not issues:
         return
 
     st.markdown("### Detailed Feedback")
-    st.caption(f"{len(issues)} issue(s) flagged - grouped by severity.")
+    st.caption(f"{len(issues)} issue(s) flagged, grouped by severity.")
 
     grouped = _group_by_severity(issues)
     for level in SEVERITY_ORDER:

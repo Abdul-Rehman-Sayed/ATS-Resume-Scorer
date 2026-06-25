@@ -12,7 +12,6 @@ from frontend.components.recommendations import display_recommendations
 from frontend.components.action_items import _collect_action_items
 
 def display_results_dashboard(analysis: Dict[str, Any]) -> None:
-    """Render the full results page from one POST /api/v1/analyze-resume response."""
     display_overall_score(analysis)
     st.markdown("---")
 

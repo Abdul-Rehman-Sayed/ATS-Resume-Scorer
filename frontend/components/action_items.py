@@ -5,7 +5,6 @@ import streamlit as st
 SEVERITY_RANK = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
 def _collect_action_items(analysis: Dict[str, Any]) -> List[Tuple[str, str, str]]:
-    """Return list of (severity, source_title, action_text)."""
     items: List[Tuple[str, str, str]] = []
 
     for issue in analysis.get("detailed_feedback") or []:
