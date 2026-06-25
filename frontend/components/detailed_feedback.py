@@ -6,11 +6,17 @@ from frontend.components._helpers import get_severity_style
 
 SEVERITY_ORDER = ["critical", "high", "medium", "low"]
 
+_LEVEL_ALIASES = {"moderate": "medium", "info": "low"}
+
+
 def _group_by_severity(issues: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
     grouped: Dict[str, List[Dict[str, Any]]] = {level: [] for level in SEVERITY_ORDER}
     for issue in issues:
         level = (issue.get("severity_level") or "low").lower()
-        grouped.setdefault(level, []).append(issue)
+        level = _LEVEL_ALIASES.get(level, level)
+        if level not in grouped:
+            level = "low"
+        grouped[level].append(issue)
     return grouped
 
 def _render_issue(issue: Dict[str, Any]) -> None:
