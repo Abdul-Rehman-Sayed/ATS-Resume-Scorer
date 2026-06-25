@@ -1,11 +1,11 @@
 :root {
-  /* Primary Colors */
+  
   --primary-color: #4f46e5;
   --primary-hover: #4338ca;
   --primary-light: #818cf8;
   --primary-dark: #3730a3;
 
-  /* Status Colors */
+  
   --success-color: #10b981;
   --success-light: #34d399;
   --success-dark: #059669;
@@ -19,7 +19,7 @@
   --info-light: #60a5fa;
   --info-dark: #2563eb;
 
-  /* Neutral Colors */
+  
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
@@ -28,13 +28,13 @@
   --border-color: #e5e7eb;
   --border-light: #f3f4f6;
 
-  /* Shadows */
+  
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 
-  /* Spacing */
+  
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -42,7 +42,7 @@
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
 
-  /* Typography */
+  
   --font-family-base:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
     sans-serif;
@@ -54,30 +54,26 @@
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 2rem;
 
-  /* Border Radius */
+  
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* Transitions */
+  
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
   --transition-slower: 500ms ease;
 }
 
-/* ============================================
-   BASE STYLES & TYPOGRAPHY
-   ============================================ */
 .stApp {
   font-family: var(--font-family-base);
   color: var(--text-primary);
   line-height: 1.6;
 }
 
-/* Consistent heading styles */
 h1,
 h2,
 h3,
@@ -89,9 +85,6 @@ h6 {
   margin-bottom: var(--spacing-md);
 }
 
-/* ============================================
-   SCORE COLOR CLASSES
-   ============================================ */
 .score-excellent {
   color: var(--success-color);
   font-weight: 700;
@@ -107,7 +100,6 @@ h6 {
   font-weight: 700;
 }
 
-/* Score display with gradient backgrounds */
 .score-display-excellent {
   background: var(--success-color);
   color: white;
@@ -131,10 +123,7 @@ h6 {
   border-radius: var(--radius-lg);
   text-align: center;
 }
-/* ====
-========================================
-   CARD STYLES
-   ============================================ */
+
 .metric-card {
   background: var(--background-white);
   border-radius: var(--radius-lg);
@@ -171,9 +160,6 @@ h6 {
   box-shadow: var(--shadow-lg);
 }
 
-/* ============================================
-   PROGRESS BAR STYLES
-   ============================================ */
 .progress-container {
   background: var(--background-light);
   border-radius: var(--radius-md);
@@ -190,7 +176,6 @@ h6 {
   overflow: hidden;
 }
 
-/* Animated shimmer effect on progress bars */
 .progress-bar::after {
   content: "";
   position: absolute;
@@ -231,9 +216,6 @@ h6 {
   background: var(--primary-color);
 }
 
-/* ============================================
-   BADGE STYLES
-   ============================================ */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -289,9 +271,6 @@ h6 {
   background: #c7d2fe;
 }
 
-/* ============================================
-   SKILL TAG STYLES
-   ============================================ */
 .skill-tag {
   display: inline-flex;
   align-items: center;
@@ -383,9 +362,6 @@ h6 {
   color: #1e40af;
 }
 
-/* ============================================
-   BUTTON STYLES
-   ============================================ */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -463,10 +439,7 @@ h6 {
   padding: var(--spacing-xs) var(--spacing-md);
   font-size: var(--font-size-sm);
 }
-/* =====
-=======================================
-   SECTION HEADERS
-   ============================================ */
+
 .section-header {
   font-size: var(--font-size-xl);
   font-weight: 600;
@@ -490,9 +463,6 @@ h6 {
   margin-bottom: var(--spacing-sm);
 }
 
-/* ============================================
-   RECOMMENDATION ITEMS
-   ============================================ */
 .recommendation-item {
   padding: var(--spacing-md) var(--spacing-lg);
   margin: var(--spacing-sm) 0;
@@ -528,9 +498,6 @@ h6 {
   background: #ecfdf5;
 }
 
-/* ============================================
-   ANIMATION KEYFRAMES
-   ============================================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -625,8 +592,7 @@ h6 {
     transform: rotate(360deg);
   }
 }
-/* 
-Animation utility classes */
+
 .fade-in {
   animation: fadeIn var(--transition-slow) ease-out;
 }
@@ -663,7 +629,6 @@ Animation utility classes */
   animation: spin 1s linear infinite;
 }
 
-/* Staggered animation delays */
 .delay-100 {
   animation-delay: 100ms;
 }
@@ -680,9 +645,6 @@ Animation utility classes */
   animation-delay: 500ms;
 }
 
-/* ============================================
-   LOADING STATES & SPINNERS
-   ============================================ */
 .loading-spinner {
   display: inline-block;
   width: 24px;
@@ -711,7 +673,6 @@ Animation utility classes */
   border-width: 5px;
 }
 
-/* Loading overlay */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -734,7 +695,6 @@ Animation utility classes */
   animation: pulse 1.5s infinite;
 }
 
-/* Skeleton loading */
 .skeleton {
   background: var(--background-light);
   background-size: 200% 100%;
@@ -767,7 +727,6 @@ Animation utility classes */
   margin-bottom: var(--spacing-md);
 }
 
-/* Dots loading animation */
 .loading-dots {
   display: inline-flex;
   gap: var(--spacing-xs);
@@ -803,10 +762,7 @@ Animation utility classes */
     opacity: 1;
   }
 }
-/*
- ============================================
-   HOVER EFFECTS
-   ============================================ */
+
 .hover-lift {
   transition:
     transform var(--transition-base),
@@ -843,7 +799,6 @@ Animation utility classes */
   border-color: var(--primary-color);
 }
 
-/* Interactive element hover states */
 .interactive {
   cursor: pointer;
   transition: all var(--transition-base);
@@ -857,9 +812,6 @@ Animation utility classes */
   transform: scale(0.98);
 }
 
-/* ============================================
-   FORM ELEMENTS
-   ============================================ */
 .form-input {
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
@@ -903,7 +855,6 @@ Animation utility classes */
   color: var(--danger-color);
 }
 
-/* File upload area */
 .file-upload-area {
   border: 2px dashed var(--border-color);
   border-radius: var(--radius-lg);
@@ -940,10 +891,7 @@ Animation utility classes */
   font-size: var(--font-size-sm);
   color: var(--text-muted);
 }
-/* ====
-========================================
-   TABLES & DATA DISPLAY
-   ============================================ */
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -971,9 +919,6 @@ Animation utility classes */
   border-bottom: none;
 }
 
-/* ============================================
-   TOOLTIPS
-   ============================================ */
 .tooltip {
   position: relative;
   cursor: help;
@@ -1003,9 +948,6 @@ Animation utility classes */
   bottom: calc(100% + 5px);
 }
 
-/* ============================================
-   MODAL & OVERLAY STYLES
-   ============================================ */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -1054,9 +996,6 @@ Animation utility classes */
   color: var(--text-primary);
 }
 
-/* ============================================
-   TABS & NAVIGATION
-   ============================================ */
 .tabs-container {
   display: flex;
   border-bottom: 2px solid var(--border-color);
@@ -1083,9 +1022,6 @@ Animation utility classes */
   border-bottom-color: var(--primary-color);
 }
 
-/* ============================================
-   ACCORDION / EXPANDER STYLES
-   ============================================ */
 .accordion-item {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -1119,12 +1055,7 @@ Animation utility classes */
   padding: var(--spacing-lg);
   animation: fadeIn var(--transition-base);
 }
-/* ====
-========================================
-   RESPONSIVE DESIGN - MOBILE FIRST
-   ============================================ */
 
-/* Extra small devices (phones, less than 576px) */
 @media (max-width: 575.98px) {
   :root {
     --spacing-lg: 1rem;
@@ -1176,7 +1107,7 @@ Animation utility classes */
     font-size: 2rem;
   }
 
-  /* Stack columns on mobile */
+  
   .mobile-stack {
     flex-direction: column !important;
   }
@@ -1185,13 +1116,12 @@ Animation utility classes */
     width: 100% !important;
   }
 
-  /* Hide on mobile */
+  
   .hide-mobile {
     display: none !important;
   }
 }
 
-/* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) and (max-width: 767.98px) {
   .metric-card {
     padding: var(--spacing-md);
@@ -1202,32 +1132,29 @@ Animation utility classes */
   }
 }
 
-/* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991.98px) {
   .metric-card {
     padding: var(--spacing-lg);
   }
 
-  /* Show on tablet and up */
+  
   .show-tablet-up {
     display: block !important;
   }
 }
 
-/* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
   .container-lg {
     max-width: 960px;
     margin: 0 auto;
   }
 
-  /* Show on desktop only */
+  
   .show-desktop {
     display: block !important;
   }
 }
 
-/* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
   .container-xl {
     max-width: 1140px;
@@ -1235,7 +1162,6 @@ Animation utility classes */
   }
 }
 
-/* Print styles */
 @media print {
   .no-print {
     display: none !important;
@@ -1255,12 +1181,7 @@ Animation utility classes */
     font-size: 12pt;
   }
 }
-/* ==
-==========================================
-   STREAMLIT-SPECIFIC OVERRIDES
-   ============================================ */
 
-/* Streamlit button enhancements */
 .stButton > button {
   transition: all var(--transition-base) !important;
 }
@@ -1274,7 +1195,6 @@ Animation utility classes */
   transform: translateY(0);
 }
 
-/* Primary button styling */
 .stButton > button[kind="primary"] {
   background: var(--primary-color) !important;
 }
@@ -1283,7 +1203,6 @@ Animation utility classes */
   background: var(--primary-hover) !important;
 }
 
-/* Streamlit file uploader */
 .stFileUploader {
   transition: all var(--transition-base);
 }
@@ -1296,12 +1215,10 @@ Animation utility classes */
   border-color: var(--primary-color) !important;
 }
 
-/* Streamlit progress bar */
 .stProgress > div > div {
   transition: width var(--transition-slower) ease-in-out !important;
 }
 
-/* Streamlit expander */
 .streamlit-expanderHeader {
   transition: background var(--transition-base) !important;
   border-radius: var(--radius-md) !important;
@@ -1311,7 +1228,6 @@ Animation utility classes */
   background: var(--background-light) !important;
 }
 
-/* Streamlit metrics */
 .stMetric {
   transition: all var(--transition-base);
 }
@@ -1320,7 +1236,6 @@ Animation utility classes */
   transform: translateY(-2px);
 }
 
-/* Streamlit tabs */
 .stTabs [data-baseweb="tab-list"] {
   gap: var(--spacing-sm);
 }
@@ -1334,7 +1249,6 @@ Animation utility classes */
   background: var(--background-light) !important;
 }
 
-/* Streamlit selectbox */
 .stSelectbox > div > div {
   transition: border-color var(--transition-base) !important;
 }
@@ -1343,7 +1257,6 @@ Animation utility classes */
   border-color: var(--primary-color) !important;
 }
 
-/* Streamlit text input */
 .stTextInput > div > div > input {
   transition: all var(--transition-base) !important;
 }
@@ -1353,7 +1266,6 @@ Animation utility classes */
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
 }
 
-/* Streamlit text area */
 .stTextArea > div > div > textarea {
   transition: all var(--transition-base) !important;
 }
@@ -1363,7 +1275,6 @@ Animation utility classes */
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
 }
 
-/* Streamlit radio buttons */
 .stRadio > div {
   gap: var(--spacing-md) !important;
 }
@@ -1378,7 +1289,6 @@ Animation utility classes */
   background: var(--background-light) !important;
 }
 
-/* Streamlit checkbox */
 .stCheckbox label {
   transition: all var(--transition-base) !important;
 }
@@ -1387,13 +1297,11 @@ Animation utility classes */
   color: var(--primary-color) !important;
 }
 
-/* Streamlit sidebar */
 .css-1d391kg,
 [data-testid="stSidebar"] {
   transition: all var(--transition-base);
 }
 
-/* Streamlit download button */
 .stDownloadButton > button {
   transition: all var(--transition-base) !important;
 }
@@ -1402,12 +1310,7 @@ Animation utility classes */
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
-/* ==
-==========================================
-   UTILITY CLASSES
-   ============================================ */
 
-/* Text utilities */
 .text-center {
   text-align: center;
 }
@@ -1475,7 +1378,6 @@ Animation utility classes */
   font-size: var(--font-size-3xl);
 }
 
-/* Spacing utilities */
 .m-0 {
   margin: 0;
 }
@@ -1552,7 +1454,6 @@ Animation utility classes */
   padding: var(--spacing-xl);
 }
 
-/* Display utilities */
 .d-none {
   display: none;
 }
@@ -1575,7 +1476,6 @@ Animation utility classes */
   display: grid;
 }
 
-/* Flexbox utilities */
 .flex-row {
   flex-direction: row;
 }
@@ -1634,7 +1534,6 @@ Animation utility classes */
   gap: var(--spacing-xl);
 }
 
-/* Width utilities */
 .w-25 {
   width: 25%;
 }
@@ -1651,7 +1550,6 @@ Animation utility classes */
   width: auto;
 }
 
-/* Border utilities */
 .border {
   border: 1px solid var(--border-color);
 }
@@ -1681,7 +1579,6 @@ Animation utility classes */
   border-radius: var(--radius-full);
 }
 
-/* Shadow utilities */
 .shadow-none {
   box-shadow: none;
 }
@@ -1698,7 +1595,6 @@ Animation utility classes */
   box-shadow: var(--shadow-xl);
 }
 
-/* Background utilities */
 .bg-white {
   background-color: var(--background-white);
 }
@@ -1721,7 +1617,6 @@ Animation utility classes */
   background-color: var(--info-color);
 }
 
-/* Overflow utilities */
 .overflow-hidden {
   overflow: hidden;
 }
@@ -1732,7 +1627,6 @@ Animation utility classes */
   overflow: scroll;
 }
 
-/* Position utilities */
 .position-relative {
   position: relative;
 }
@@ -1746,7 +1640,6 @@ Animation utility classes */
   position: sticky;
 }
 
-/* Cursor utilities */
 .cursor-pointer {
   cursor: pointer;
 }
@@ -1757,7 +1650,6 @@ Animation utility classes */
   cursor: not-allowed;
 }
 
-/* Visibility utilities */
 .visible {
   visibility: visible;
 }
@@ -1774,7 +1666,6 @@ Animation utility classes */
   opacity: 1;
 }
 
-/* Transition utilities */
 .transition-none {
   transition: none;
 }
@@ -1788,11 +1679,6 @@ Animation utility classes */
   transition: all var(--transition-slow);
 }
 
-/* ============================================
-   SPECIAL COMPONENTS
-   ============================================ */
-
-/* Score circle display */
 .score-circle {
   width: 120px;
   height: 120px;
@@ -1826,7 +1712,6 @@ Animation utility classes */
   color: white;
 }
 
-/* Stat card */
 .stat-card {
   text-align: center;
   padding: var(--spacing-lg);
@@ -1852,7 +1737,6 @@ Animation utility classes */
   opacity: 0.9;
 }
 
-/* Feature card */
 .feature-card {
   padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
@@ -1885,7 +1769,6 @@ Animation utility classes */
   font-size: var(--font-size-sm);
 }
 
-/* Step indicator */
 .step-indicator {
   display: flex;
   align-items: center;
@@ -1937,7 +1820,6 @@ Animation utility classes */
   background: var(--success-color);
 }
 
-/* Divider */
 .divider {
   height: 1px;
   background: var(--border-color);
@@ -1950,7 +1832,6 @@ Animation utility classes */
   margin: 0 var(--spacing-lg);
 }
 
-/* Empty state */
 .empty-state {
   text-align: center;
   padding: var(--spacing-2xl);
@@ -1976,23 +1857,15 @@ Animation utility classes */
   margin: 0 auto;
 }
 
-/* ============================================
-   APP SHELL: hide sidebar, top navbar, layout
-   (added for the landing -> auth -> app redesign)
-   ============================================ */
-
-/* Hide Streamlit's sidebar entirely (we use a top navbar instead) */
 [data-testid="stSidebar"] { display: none !important; }
 [data-testid="collapsedControl"] { display: none !important; }
 
-/* Tighten the default top padding so the navbar sits near the top */
 .block-container {
   padding-top: 4rem !important;
   padding-bottom: 2rem !important;
   max-width: 1100px;
 }
 
-/* Keep clear of Streamlit's fixed top header on hosted deployments */
 [data-testid="stHeader"] {
   background: transparent;
 }
@@ -2000,7 +1873,6 @@ Animation utility classes */
   padding-top: 4rem !important;
 }
 
-/* Top navbar */
 .app-navbar {
   display: flex;
   align-items: center;
@@ -2017,7 +1889,6 @@ Animation utility classes */
   color: var(--primary-color);
 }
 
-/* Make the nav row of Streamlit buttons sit inline and flat */
 .app-nav .stButton > button {
   background: transparent;
   border: none;
@@ -2031,12 +1902,10 @@ Animation utility classes */
   transform: none;
 }
 
-/* Auth card centered */
 .auth-wrap { max-width: 420px; margin: 2.5rem auto 0 auto; }
 .auth-title { text-align: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem; }
 .auth-sub { text-align: center; color: var(--text-secondary); margin-bottom: 1.25rem; }
 
-/* Flat hero for the landing page */
 .hero {
   text-align: center;
   padding: 3rem 1.5rem;
@@ -2049,7 +1918,6 @@ Animation utility classes */
 .hero h3 { font-weight: 500; opacity: 0.95; margin-bottom: 0.75rem; }
 .hero p  { opacity: 0.9; max-width: 640px; margin: 0 auto; }
 
-/* Responsive: shrink hero + stack nav on small screens */
 @media (max-width: 640px) {
   .hero { padding: 2rem 1rem; }
   .hero h1 { font-size: 1.9rem; }

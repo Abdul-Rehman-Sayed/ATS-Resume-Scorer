@@ -165,7 +165,7 @@
 
     <h1 class="report-title">Skill Validation &amp; Content Analysis</h1>
 
-    <!-- ── Stats ── -->
+    
     <h2>Skill Validation Analysis</h2>
 
     <div class="stats-bar">
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <!-- ── Validated Skills ── -->
+    
     {% if validated_skills %}
     <h2>Validated Skills</h2>
     <p style="font-size:13px; color:#64748b; margin-bottom:14px;">
@@ -204,7 +204,7 @@
     {% endfor %}
     {% endif %}
 
-    <!-- ── Unvalidated Skills ── -->
+    
     {% if unvalidated_skills %}
     <h2>Unvalidated Skills (Need Evidence)</h2>
     <p style="font-size:13px; color:#64748b; margin-bottom:14px;">
@@ -224,7 +224,7 @@
     </div>
     {% endif %}
 
-    <!-- ── Grammar & Spelling ── -->
+    
     <h2>Grammar &amp; Spelling Analysis</h2>
     <div class="info-block">
         <div class="info-row">
@@ -249,7 +249,7 @@
         </div>
     </div>
 
-    <!-- ── ATS Compatibility ── -->
+    
     <h2>ATS Compatibility</h2>
     {% set ats_score = component_scores.ats_compatibility %}
     {% set ats_pct   = component_pct.ats_compatibility %}

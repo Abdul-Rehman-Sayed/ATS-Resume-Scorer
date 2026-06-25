@@ -186,11 +186,11 @@
         {{ total_issues }} issue(s) found. Addressing all of them could significantly improve your ATS score.
     </p>
 
-    <!-- ═══════════════════════════════════════════════ -->
-    <!-- PART 1: Detailed Recommendations                -->
-    <!-- ═══════════════════════════════════════════════ -->
+    
+    
+    
 
-    <!-- ── High Priority ── -->
+    
     {% if high_priority %}
     <h2>High Priority - Fix These First</h2>
     {% for issue in high_priority %}
@@ -236,7 +236,7 @@
     {% endfor %}
     {% endif %}
 
-    <!-- ── Medium Priority ── -->
+    
     {% if medium_priority %}
     <h2>Medium Priority - Strengthen Your Resume</h2>
     {% for issue in medium_priority %}
@@ -273,7 +273,7 @@
     {% endfor %}
     {% endif %}
 
-    <!-- ── Low Priority ── -->
+    
     {% if low_priority %}
     <h2>Low Priority - Polish</h2>
     {% for issue in low_priority %}
@@ -300,9 +300,9 @@
     </div>
     {% endif %}
 
-    <!-- ═══════════════════════════════════════════════ -->
-    <!-- PART 2: Printable Action Items Checklist        -->
-    <!-- ═══════════════════════════════════════════════ -->
+    
+    
+    
 
     <div class="checklist-section">
         <h2>Action Items Checklist</h2>

@@ -113,6 +113,7 @@ async def analyze_resume(
         skills=list(result.get("skills", [])[:20]),
         jd_comparison=jd_comparison_result,
         interpretation=result.get("interpretation", ""),
+        strengths=result.get("strengths", []),
     )
 
     try:

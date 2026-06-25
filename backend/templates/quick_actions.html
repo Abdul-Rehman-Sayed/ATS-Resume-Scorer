@@ -126,7 +126,7 @@
 
     {% if jd_analysis %}
 
-        <!-- ── Match Score Cards ── -->
+        
         <div class="match-cards">
             <div class="match-card card-keyword">
                 {% set kw_pct = jd_analysis.match_percentage | float %}
@@ -146,7 +146,7 @@
             </div>
         </div>
 
-        <!-- ── Matched Keywords ── -->
+        
         {% if jd_analysis.matched_keywords %}
         <h2>Matched Keywords</h2>
         <div class="pill-section">
@@ -159,7 +159,7 @@
         </div>
         {% endif %}
 
-        <!-- ── Missing Keywords ── -->
+        
         {% if jd_analysis.missing_keywords %}
         <h2>Missing Keywords ({{ jd_analysis.missing_keywords | length }})</h2>
         <div class="pill-section">
@@ -172,7 +172,7 @@
         </div>
         {% endif %}
 
-        <!-- ── Skills Gap ── -->
+        
         {% if jd_analysis.skills_gap %}
         <h2>Skills Gap ({{ jd_analysis.skills_gap | length }})</h2>
         <p style="font-size:13px; color:#64748b; margin-bottom:14px;">
@@ -186,7 +186,7 @@
         {% endfor %}
         {% endif %}
 
-        <!-- ── Improvement Suggestions ── -->
+        
         <h2>Improvement Suggestions</h2>
 
         {% if jd_analysis.match_percentage | float < 40 %}
@@ -223,7 +223,7 @@
 
     {% else %}
 
-        <!-- ── No JD Provided ── -->
+        
         <div class="no-jd-box">
             <div class="no-jd-icon"></div>
             <div class="no-jd-title">No Job Description Provided</div>
