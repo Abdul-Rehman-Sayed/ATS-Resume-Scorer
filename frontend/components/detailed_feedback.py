@@ -33,7 +33,7 @@ def _render_issue(issue: Dict[str, Any]) -> None:
         f"""
         <div style="border-left:4px solid {text_color}; background-color:{bg_color};
                     padding:0.75rem 1rem; border-radius:6px; margin-bottom:0.5rem;">
-            <strong style="color:{text_color};">{icon} {title}</strong>
+            <strong style="color:{text_color};">{title}</strong>
             <span style="color:#666; margin-left:0.5rem; font-size:0.85rem;">{impact}</span>
         </div>
         """,
